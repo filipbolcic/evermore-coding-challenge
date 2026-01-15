@@ -29,7 +29,7 @@ Once you are done, submit a Pull Request for a review and discussion
 
 Ensure you have the following installed:
 
-- **Node.js** (v20+ recommended)
+- **Node.js** (v22+ recommended)
 - **Docker** & **Docker Compose**
 - **NPM** (v7+ comes with Node)
 
