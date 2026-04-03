@@ -1,7 +1,7 @@
-import { Autocomplete, Box, Button, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Button, Stack, TextField, Typography } from '@mui/material';
+import { format } from 'date-fns';
 import { useCalendarStore } from '../stores/calendarStore';
 
-//todo testing purposes, use TZ library
 const COMMON_TIMEZONES = [
   'UTC',
   'America/New_York',
@@ -26,23 +26,19 @@ export function CalendarHeader() {
   } = useCalendarStore();
 
   const formatCurrentDate = () => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      ...(viewType === 'daily' && { day: 'numeric' }),
-    };
-    return currentDate.toLocaleDateString('en-US', options);
+    const dateFormat = viewType === 'daily' ? 'MMMM d, yyyy' : 'MMMM yyyy';
+    return format(currentDate, dateFormat);
   };
 
   return (
     <Stack
-      gap={2}
+      spacing={2}
       direction="row"
       alignItems="center"
       justifyContent="space-between"
-      flexWrap={'wrap'}
+      flexWrap="wrap"
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Stack direction="row" spacing={1} alignItems="center">
         <Button variant="outlined" size="small" onClick={goToPrevious}>
           ‹
         </Button>
@@ -52,13 +48,13 @@ export function CalendarHeader() {
         <Button variant="outlined" size="small" onClick={goToNext}>
           ›
         </Button>
-      </Box>
+      </Stack>
 
       <Typography variant="h5" sx={{ minWidth: 200 }}>
         {formatCurrentDate()}
       </Typography>
 
-      <Box sx={{ display: 'flex', gap: 1 }}>
+      <Stack direction="row" spacing={1}>
         <Button
           variant={viewType === 'monthly' ? 'contained' : 'outlined'}
           size="small"
@@ -80,7 +76,7 @@ export function CalendarHeader() {
         >
           Day
         </Button>
-      </Box>
+      </Stack>
 
       <Autocomplete
         value={selectedTimezone}
