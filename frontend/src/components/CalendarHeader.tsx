@@ -7,7 +7,7 @@ const COMMON_TIMEZONES = [
   'America/New_York',
   'America/Los_Angeles',
   'Europe/London',
-  'Europe/Paris',
+  'Europe/Zagreb',
   'Asia/Tokyo',
   'Asia/Kolkata',
   'Australia/Sydney',
@@ -16,7 +16,7 @@ const COMMON_TIMEZONES = [
 export function CalendarHeader() {
   const {
     viewType,
-    currentDate,
+    selectedDate,
     selectedTimezone,
     setViewType,
     goToPrevious,
@@ -25,10 +25,8 @@ export function CalendarHeader() {
     setSelectedTimezone,
   } = useCalendarStore();
 
-  const formatCurrentDate = () => {
-    const dateFormat = viewType === 'daily' ? 'MMMM d, yyyy' : 'MMMM yyyy';
-    return format(currentDate, dateFormat);
-  };
+  const dateFormat = viewType === 'daily' ? 'MMMM d, yyyy' : 'MMMM yyyy';
+  const formattedDate = format(selectedDate, dateFormat);
 
   return (
     <Stack
@@ -51,7 +49,7 @@ export function CalendarHeader() {
       </Stack>
 
       <Typography variant="h5" sx={{ minWidth: 200 }}>
-        {formatCurrentDate()}
+        {formattedDate}
       </Typography>
 
       <Stack direction="row" spacing={1}>

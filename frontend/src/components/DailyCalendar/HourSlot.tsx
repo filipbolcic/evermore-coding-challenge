@@ -1,5 +1,7 @@
+import { tz, TZDateMini } from '@date-fns/tz';
 import { Paper, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
+import { useCalendarStore } from '../../stores/calendarStore';
 import type { MockEvent } from '../../utils/mockData';
 
 const HOUR_LABELS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
@@ -11,8 +13,10 @@ interface HourSlotProps {
 }
 
 export function HourSlot({ hour, events, isCurrentHour }: HourSlotProps) {
+  const { selectedTimezone } = useCalendarStore();
+
   const hourEvents = events.filter((e) => {
-    const startTime = new Date(e.startUtc).getHours();
+    const startTime = new TZDateMini(e.startUtc, selectedTimezone).getHours();
     return startTime === hour;
   });
 
@@ -54,8 +58,8 @@ export function HourSlot({ hour, events, isCurrentHour }: HourSlotProps) {
               {event.title}
             </Typography>
             <Typography variant="caption" display="block">
-              {format(new Date(event.startUtc), 'HH:mm')} -{' '}
-              {format(new Date(event.endUtc), 'HH:mm')}
+              {format(event.startUtc, 'HH:mm', { in: tz(selectedTimezone) })} -{' '}
+              {format(event.endUtc, 'HH:mm', { in: tz(selectedTimezone) })}
             </Typography>
           </Paper>
         ))}

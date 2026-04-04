@@ -1,6 +1,6 @@
+import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/material';
 import { Link, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
-import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/material';
 
 export function RootLayout() {
   return (

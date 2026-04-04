@@ -1,11 +1,13 @@
+import { TZDateMini } from '@date-fns/tz';
+import { add, sub } from 'date-fns';
 import { create } from 'zustand';
-import { getBrowserTimezone } from '../utils/date';
+import { dateFormat, getBrowserTimezone } from '../utils/date';
 
 export type CalendarViewType = 'monthly' | 'weekly' | 'daily';
 
 interface CalendarState {
   viewType: CalendarViewType;
-  currentDate: Date;
+  selectedDate: string;
   selectedTimezone: string;
 
   setViewType: (viewType: CalendarViewType) => void;
@@ -17,50 +19,59 @@ interface CalendarState {
 
 export const useCalendarStore = create<CalendarState>((set, get) => ({
   viewType: 'monthly',
-  currentDate: new Date(),
+  selectedDate: dateFormat(new Date()),
   selectedTimezone: getBrowserTimezone(),
 
   setViewType: (viewType) => set({ viewType }),
 
   goToPrevious: () => {
-    const { currentDate, viewType } = get();
-    const newDate = new Date(currentDate);
+    const { selectedDate, viewType } = get();
 
     switch (viewType) {
-      case 'monthly':
-        newDate.setMonth(newDate.getMonth() - 1);
+      case 'monthly': {
+        const newDate = sub(selectedDate, { months: 1 });
+        set({ selectedDate: dateFormat(newDate) });
         break;
-      case 'weekly':
-        newDate.setDate(newDate.getDate() - 7);
+      }
+      case 'weekly': {
+        const newDate = sub(selectedDate, { weeks: 1 });
+        set({ selectedDate: dateFormat(newDate) });
         break;
-      case 'daily':
-        newDate.setDate(newDate.getDate() - 1);
+      }
+      case 'daily': {
+        const newDate = sub(selectedDate, { days: 1 });
+        set({ selectedDate: dateFormat(newDate) });
         break;
+      }
     }
-
-    set({ currentDate: newDate });
   },
 
   goToNext: () => {
-    const { currentDate, viewType } = get();
-    const newDate = new Date(currentDate);
+    const { selectedDate, viewType } = get();
 
     switch (viewType) {
-      case 'monthly':
-        newDate.setMonth(newDate.getMonth() + 1);
+      case 'monthly': {
+        const newDate = add(selectedDate, { months: 1 });
+        set({ selectedDate: dateFormat(newDate) });
         break;
-      case 'weekly':
-        newDate.setDate(newDate.getDate() + 7);
+      }
+      case 'weekly': {
+        const newDate = add(selectedDate, { weeks: 1 });
+        set({ selectedDate: dateFormat(newDate) });
         break;
-      case 'daily':
-        newDate.setDate(newDate.getDate() + 1);
+      }
+      case 'daily': {
+        const newDate = add(selectedDate, { days: 1 });
+        set({ selectedDate: dateFormat(newDate) });
         break;
+      }
     }
-
-    set({ currentDate: newDate });
   },
 
-  goToToday: () => set({ currentDate: new Date() }),
+  goToToday: () => {
+    const { selectedTimezone } = get();
+    set({ selectedDate: dateFormat(TZDateMini.tz(selectedTimezone)) });
+  },
 
   setSelectedTimezone: (selectedTimezone) => set({ selectedTimezone }),
 }));

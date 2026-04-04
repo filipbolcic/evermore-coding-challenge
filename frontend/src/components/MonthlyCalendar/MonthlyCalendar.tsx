@@ -1,3 +1,4 @@
+import { tz, TZDateMini } from '@date-fns/tz';
 import { Box, Stack, Typography } from '@mui/material';
 import {
   eachDayOfInterval,
@@ -10,31 +11,20 @@ import {
   startOfWeek,
 } from 'date-fns';
 import { useCalendarStore } from '../../stores/calendarStore';
-import { convertUtcToTz } from '../../utils/date';
 import { MOCK_EVENTS } from '../../utils/mockData';
 import { DayCell } from './DayCell';
 
 export function MonthlyCalendar() {
-  const { currentDate, selectedTimezone } = useCalendarStore();
+  const { selectedDate: selectedDate, selectedTimezone } = useCalendarStore();
 
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(currentDate);
+  const monthStart = startOfMonth(selectedDate, { in: tz(selectedTimezone) });
+  const monthEnd = endOfMonth(selectedDate, { in: tz(selectedTimezone) });
+
+  //todo this should be configurable
   const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
   const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
 
   const calendarDays = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
-
-  const getEventsForDay = (day: Date) => {
-    const todayEvents = MOCK_EVENTS.filter((event) => {
-      const eventDate = convertUtcToTz(new Date(event.startUtc), selectedTimezone);
-      return isSameDay(eventDate, day);
-    });
-
-    return todayEvents.sort(
-      (a, b) => new Date(a.startUtc).getTime() - new Date(b.startUtc).getTime()
-    );
-  };
-
   return (
     <Stack spacing={1}>
       <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
@@ -47,8 +37,8 @@ export function MonthlyCalendar() {
 
       <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
         {calendarDays.map((day, index) => {
-          const events = getEventsForDay(day);
-          const isInCurrentMonth = isSameMonth(day, currentDate);
+          const events = getEventsForDay(day, selectedTimezone);
+          const isInCurrentMonth = isSameMonth(day, selectedDate);
           const isCurrentDay = isToday(day);
 
           return (
@@ -63,5 +53,16 @@ export function MonthlyCalendar() {
         })}
       </Box>
     </Stack>
+  );
+}
+
+function getEventsForDay(day: Date, timezone: string) {
+  const todayEvents = MOCK_EVENTS.filter((e) => {
+    const eventDate = new TZDateMini(e.startUtc, timezone);
+    return isSameDay(eventDate, day);
+  });
+
+  return todayEvents.sort(
+    (a, b) => new Date(a.startUtc).getTime() - new Date(b.startUtc).getTime()
   );
 }
