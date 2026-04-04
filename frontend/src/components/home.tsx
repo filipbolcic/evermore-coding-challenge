@@ -3,6 +3,7 @@ import { useCalendarStore } from '../stores/calendarStore';
 import { CalendarHeader } from './CalendarHeader';
 import { DailyCalendar } from './DailyCalendar';
 import { MonthlyCalendar } from './MonthlyCalendar';
+import { WeeklyCalendar } from './WeeklyCalendar';
 
 export function HomeComponent() {
   const { viewType } = useCalendarStore();
@@ -12,7 +13,7 @@ export function HomeComponent() {
       <Typography variant="h4">Calendar</Typography>
       <CalendarHeader />
       {viewType === 'monthly' && <MonthlyCalendar />}
-      {viewType === 'weekly' && <Typography>Weekly view coming soon...</Typography>}
+      {viewType === 'weekly' && <WeeklyCalendar />}
       {viewType === 'daily' && <DailyCalendar />}
     </Stack>
   );

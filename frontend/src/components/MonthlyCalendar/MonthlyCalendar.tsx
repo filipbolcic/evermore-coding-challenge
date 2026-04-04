@@ -15,7 +15,7 @@ import { MOCK_EVENTS } from '../../utils/mockData';
 import { DayCell } from './DayCell';
 
 export function MonthlyCalendar() {
-  const { selectedDate: selectedDate, selectedTimezone } = useCalendarStore();
+  const { selectedDate, selectedTimezone } = useCalendarStore();
 
   const monthStart = startOfMonth(selectedDate, { in: tz(selectedTimezone) });
   const monthEnd = endOfMonth(selectedDate, { in: tz(selectedTimezone) });
