@@ -11,9 +11,11 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import type { MockEvent } from '../../types/date';
 import { UTC_TIMEZONE } from '../../utils/date';
+import { ConfirmDialog } from '../ConfirmDialog';
 import { TimezoneSelect } from '../TimezoneSelect';
 import { getTzDate, useEditEventForm, type EditEventFormValues } from './utils';
 
@@ -22,16 +24,21 @@ interface Props {
   values: EditEventFormValues;
   eventId?: string;
   onSubmit: (event: MockEvent) => void;
+  onDelete?: () => void;
   onClose: () => void;
 }
 
-export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit }: Props) {
+export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, onDelete }: Props) {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useEditEventForm(values);
+  const currentTitle = watch('title');
+  const canDelete = Boolean(eventId && onDelete);
 
   function handleFormSubmit({
     startDate,
@@ -57,8 +64,18 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit }: 
   }
 
   function handleClose() {
+    setIsDeleteDialogOpen(false);
     reset();
     onClose();
+  }
+
+  function handleDeleteConfirm() {
+    if (!onDelete) {
+      return;
+    }
+
+    onDelete();
+    handleClose();
   }
 
   return (
@@ -171,6 +188,11 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit }: 
             </Stack>
           </DialogContent>
           <DialogActions>
+            {canDelete && (
+              <Button color="error" onClick={() => setIsDeleteDialogOpen(true)} type="button" sx={{ mr: 'auto' }}>
+                Delete
+              </Button>
+            )}
             <Button onClick={handleClose} type="button">
               Cancel
             </Button>
@@ -180,6 +202,14 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit }: 
           </DialogActions>
         </form>
       </Dialog>
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        title="Delete event?"
+        confirmLabel="Delete"
+        message={`Are you sure you want to delete "${currentTitle}"?`}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleDeleteConfirm}
+      />
     </LocalizationProvider>
   );
 }
