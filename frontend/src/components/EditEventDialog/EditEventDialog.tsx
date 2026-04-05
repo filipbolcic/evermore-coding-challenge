@@ -11,7 +11,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { useEffect } from 'react';
 import { Controller } from 'react-hook-form';
 import type { MockEvent } from '../../types/date';
 import { UTC_TIMEZONE } from '../../utils/date';
@@ -21,21 +20,18 @@ import { getTzDate, useEditEventForm, type EditEventFormValues } from './utils';
 interface Props {
   isOpen: boolean;
   values: EditEventFormValues;
+  eventId?: string;
   onSubmit: (event: MockEvent) => void;
   onClose: () => void;
 }
 
-export function EditEventDialog({ isOpen, values, onClose, onSubmit }: Props) {
+export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit }: Props) {
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors },
   } = useEditEventForm(values);
-
-  useEffect(() => {
-    reset(values);
-  }, [reset, values]);
 
   function handleFormSubmit({
     startDate,
@@ -52,7 +48,7 @@ export function EditEventDialog({ isOpen, values, onClose, onSubmit }: Props) {
     const endUtc = tzEndDateTime.withTimeZone(UTC_TIMEZONE);
 
     onSubmit({
-      id: crypto.randomUUID(),
+      id: eventId ?? crypto.randomUUID(),
       title,
       startUtc: startUtc.toISOString(),
       endUtc: endUtc.toISOString(),
@@ -69,7 +65,7 @@ export function EditEventDialog({ isOpen, values, onClose, onSubmit }: Props) {
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth="sm">
         <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <DialogTitle>Add event</DialogTitle>
+          <DialogTitle>{eventId ? 'Edit event' : 'Add event'}</DialogTitle>
           <DialogContent>
             <Stack spacing={2} sx={{ mt: 1 }}>
               <Controller

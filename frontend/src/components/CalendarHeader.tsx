@@ -81,12 +81,14 @@ export function CalendarHeader() {
         <TimezoneSelect timezone={selectedTimezone} onSelectTimezone={setSelectedTimezone} />
       </Stack>
 
-      <EditEventDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        onSubmit={addEvent}
-        values={getEditEventBaseValues(roundToNearestHours(new Date()), selectedTimezone)}
-      />
+      {isDialogOpen && (
+        <EditEventDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onSubmit={addEvent}
+          values={getEditEventBaseValues(roundToNearestHours(new Date()), selectedTimezone)}
+        />
+      )}
     </>
   );
 }

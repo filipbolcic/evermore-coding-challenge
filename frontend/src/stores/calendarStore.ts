@@ -19,6 +19,8 @@ interface CalendarState {
   goToToday: () => void;
   setSelectedTimezone: (timezone: string) => void;
   addEvent: (event: MockEvent) => void;
+  updateEvent: (event: MockEvent) => void;
+  deleteEvent: (eventId: string) => void;
 }
 
 export const useCalendarStore = create<CalendarState>((set, get) => ({
@@ -81,4 +83,16 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
   setSelectedTimezone: (selectedTimezone) => set({ selectedTimezone }),
 
   addEvent: (event) => set((state) => ({ events: [...state.events, event] })),
+
+  updateEvent: (event) =>
+    set((state) => ({
+      events: state.events.map((existingEvent) =>
+        existingEvent.id === event.id ? event : existingEvent
+      ),
+    })),
+
+  deleteEvent: (eventId) =>
+    set((state) => ({
+      events: state.events.filter((event) => event.id !== eventId),
+    })),
 }));
