@@ -2,7 +2,8 @@ import { Button, Stack, Typography } from '@mui/material';
 import { format, roundToNearestHours } from 'date-fns';
 import { useState } from 'react';
 import { useCalendarStore } from '../stores/calendarStore';
-import { AddEventDialog } from './AddEventDialog';
+import { EditEventDialog } from './EditEventDialog';
+import { getEditEventBaseValues } from './EditEventDialog/utils';
 import { TimezoneSelect } from './TimezoneSelect';
 
 export function CalendarHeader() {
@@ -80,12 +81,11 @@ export function CalendarHeader() {
         <TimezoneSelect timezone={selectedTimezone} onSelectTimezone={setSelectedTimezone} />
       </Stack>
 
-      <AddEventDialog
-        open={isDialogOpen}
+      <EditEventDialog
+        isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         onSubmit={addEvent}
-        startDate={roundToNearestHours(new Date())}
-        timezone={selectedTimezone}
+        values={getEditEventBaseValues(roundToNearestHours(new Date()), selectedTimezone)}
       />
     </>
   );

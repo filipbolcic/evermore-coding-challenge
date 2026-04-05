@@ -11,13 +11,13 @@ export interface EditEventFormValues {
   timezone: string;
 }
 
-export function useEditEventForm(startDate: Date, timezone: string) {
+export function useEditEventForm(values: EditEventFormValues) {
   return useForm<EditEventFormValues>({
-    defaultValues: getAddEventBaseValues(startDate, timezone),
+    defaultValues: values,
   });
 }
 
-export function getAddEventBaseValues(startDate: Date, timezone: string) {
+export function getEditEventBaseValues(startDate: Date, timezone: string) {
   const endDate = addHours(startDate, 1);
 
   return {

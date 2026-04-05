@@ -16,32 +16,26 @@ import { Controller } from 'react-hook-form';
 import type { MockEvent } from '../../types/date';
 import { UTC_TIMEZONE } from '../../utils/date';
 import { TimezoneSelect } from '../TimezoneSelect';
-import {
-  getAddEventBaseValues,
-  getTzDate,
-  useEditEventForm,
-  type EditEventFormValues,
-} from './utils';
+import { getTzDate, useEditEventForm, type EditEventFormValues } from './utils';
 
 interface Props {
-  open: boolean;
-  onClose: () => void;
+  isOpen: boolean;
+  values: EditEventFormValues;
   onSubmit: (event: MockEvent) => void;
-  startDate: Date;
-  timezone: string;
+  onClose: () => void;
 }
 
-export function AddEventDialog({ open, onClose, onSubmit, startDate, timezone }: Props) {
+export function EditEventDialog({ isOpen, values, onClose, onSubmit }: Props) {
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useEditEventForm(startDate, timezone);
+  } = useEditEventForm(values);
 
   useEffect(() => {
-    reset(getAddEventBaseValues(new Date(startDate), timezone));
-  }, [reset, startDate, timezone]);
+    reset(values);
+  }, [reset, values]);
 
   function handleFormSubmit({
     startDate,
@@ -73,7 +67,7 @@ export function AddEventDialog({ open, onClose, onSubmit, startDate, timezone }:
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+      <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth="sm">
         <form onSubmit={handleSubmit(handleFormSubmit)}>
           <DialogTitle>Add event</DialogTitle>
           <DialogContent>
