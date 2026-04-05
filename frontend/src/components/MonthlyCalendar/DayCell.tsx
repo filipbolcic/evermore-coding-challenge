@@ -1,6 +1,7 @@
 import { Paper, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import type { MockEvent } from '../../types/date';
+import { MonthlyEventItem } from './MonthlyEventItem';
 
 interface DayCellProps {
   day: Date;
@@ -31,30 +32,10 @@ export function DayCell({ day, events, isInCurrentMonth, isCurrentDay }: DayCell
         {format(day, 'd')}
       </Typography>
 
-      <Stack spacing={0.25} sx={{ mt: 0.5 }}>
-        {events.slice(0, 3).map((event) => (
-          <Typography
-            key={event.id}
-            variant="caption"
-            sx={{
-              backgroundColor: 'secondary.light',
-              color: 'secondary.contrastText',
-              px: 0.5,
-              py: 0.25,
-              borderRadius: 0.5,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {event.title}
-          </Typography>
+      <Stack spacing={0.25} sx={{ mt: 0.5, maxHeight: 120, overflowY: 'auto' }}>
+        {events.map((event) => (
+          <MonthlyEventItem key={event.id} event={event} />
         ))}
-        {events.length > 3 && (
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            +{events.length - 3} more
-          </Typography>
-        )}
       </Stack>
     </Paper>
   );

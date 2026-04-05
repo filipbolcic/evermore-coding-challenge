@@ -1,5 +1,5 @@
 import { tz, TZDateMini } from '@date-fns/tz';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import {
   eachDayOfInterval,
   endOfMonth,
@@ -26,17 +26,30 @@ export function MonthlyCalendar() {
   const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
 
   const calendarDays = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
+
+  const weekDayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const minColumnWidth = 180;
+  const minCalendarWidth = weekDayLabels.length * minColumnWidth;
+
   return (
-    <Stack spacing={1}>
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-          <Box key={day} sx={{ p: 1, textAlign: 'center', fontWeight: 'bold' }}>
-            <Typography variant="subtitle2">{day}</Typography>
+    <Box sx={{ overflowX: 'auto', width: '100%' }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(7, minmax(${minColumnWidth}px, 1fr))`,
+          gap: 1,
+          minWidth: minCalendarWidth,
+          width: `max(100%, ${minCalendarWidth}px)`,
+        }}
+      >
+        {weekDayLabels.map((day) => (
+          <Box key={day} sx={{ p: 1, textAlign: 'center' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+              {day}
+            </Typography>
           </Box>
         ))}
-      </Box>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
         {calendarDays.map((day, index) => {
           const events = getEventsForDay(day, selectedTimezone, calendarEvents);
           const isInCurrentMonth = isSameMonth(day, selectedDate);
@@ -53,7 +66,7 @@ export function MonthlyCalendar() {
           );
         })}
       </Box>
-    </Stack>
+    </Box>
   );
 }
 
