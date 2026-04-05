@@ -11,7 +11,7 @@ import {
   startOfWeek,
 } from 'date-fns';
 import { useCalendarStore } from '../../stores/calendarStore';
-import type { MockEvent } from '../../utils/mockData';
+import type { MockEvent } from '../../types/date';
 import { DayCell } from './DayCell';
 
 export function MonthlyCalendar() {
@@ -22,7 +22,6 @@ export function MonthlyCalendar() {
 
   const { events: calendarEvents } = useCalendarStore();
 
-  //todo this should be configurable
   const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 });
   const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
 

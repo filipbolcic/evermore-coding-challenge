@@ -1,8 +1,9 @@
 import { TZDateMini } from '@date-fns/tz';
 import { add, sub } from 'date-fns';
 import { create } from 'zustand';
+import type { MockEvent } from '../types/date';
 import { dateFormat, getBrowserTimezone } from '../utils/date';
-import { MOCK_EVENTS, type MockEvent } from '../utils/mockData';
+import { MOCK_EVENTS } from '../utils/mockData';
 
 export type CalendarViewType = 'monthly' | 'weekly' | 'daily';
 

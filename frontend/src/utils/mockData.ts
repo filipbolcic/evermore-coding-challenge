@@ -1,10 +1,3 @@
-export interface MockEvent {
-  id: string;
-  title: string;
-  startUtc: string;
-  endUtc: string;
-}
-
 // 'UTC': 0,
 // 'America/New_York': -4,
 // 'America/Los_Angeles': -7,
@@ -13,6 +6,8 @@ export interface MockEvent {
 // 'Asia/Tokyo': 9,
 // 'Asia/Kolkata': 5.5,
 // 'Australia/Sydney': 10,
+
+import type { MockEvent } from '../types/date';
 
 export const MOCK_EVENTS: MockEvent[] = [
   {

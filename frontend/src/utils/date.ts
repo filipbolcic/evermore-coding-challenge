@@ -1,5 +1,7 @@
 import { format, formatISO } from 'date-fns';
 
+export const UTC_TIMEZONE = 'UTC';
+
 export function dateFormat(date: number | string | Date) {
   return formatISO(date, { representation: 'date' });
 }

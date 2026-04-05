@@ -1,0 +1,40 @@
+import { TZDate } from '@date-fns/tz';
+import { addHours } from 'date-fns';
+import { useForm } from 'react-hook-form';
+
+export interface EditEventFormValues {
+  title: string;
+  startDate: Date;
+  startTime: Date;
+  endDate: Date;
+  endTime: Date;
+  timezone: string;
+}
+
+export function useEditEventForm(startDate: Date, timezone: string) {
+  return useForm<EditEventFormValues>({
+    defaultValues: getAddEventBaseValues(startDate, timezone),
+  });
+}
+
+export function getAddEventBaseValues(startDate: Date, timezone: string) {
+  const endDate = addHours(startDate, 1);
+
+  return {
+    title: '',
+    startDate,
+    startTime: startDate,
+    endDate,
+    endTime: endDate,
+    timezone,
+  };
+}
+
+export function getTzDate(timezone: string, dateSegment: Date, timeSegment: Date) {
+  const tzDateTime = TZDate.tz(timezone);
+
+  tzDateTime.setFullYear(dateSegment.getFullYear(), dateSegment.getMonth(), dateSegment.getDate());
+  tzDateTime.setHours(timeSegment.getHours(), timeSegment.getMinutes());
+
+  return tzDateTime;
+}

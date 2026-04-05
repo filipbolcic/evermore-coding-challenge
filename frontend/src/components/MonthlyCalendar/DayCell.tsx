@@ -1,6 +1,6 @@
 import { Paper, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
-import type { MockEvent } from '../../utils/mockData';
+import type { MockEvent } from '../../types/date';
 
 interface DayCellProps {
   day: Date;
