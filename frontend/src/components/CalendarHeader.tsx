@@ -1,4 +1,4 @@
-import { Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { format, roundToNearestHours } from 'date-fns';
 import { useState } from 'react';
 import { useCalendarStore } from '../stores/calendarStore';
@@ -26,31 +26,37 @@ export function CalendarHeader() {
 
   return (
     <>
-      <Stack
-        spacing={2}
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        flexWrap="wrap"
-      >
-        <Stack direction="row" spacing={1} alignItems="center">
-          <Button variant="outlined" size="small" onClick={goToPrevious}>
-            ‹
-          </Button>
-          <Button variant="outlined" size="small" onClick={goToToday}>
-            Today
-          </Button>
-          <Button variant="outlined" size="small" onClick={goToNext}>
-            ›
-          </Button>
+      <Stack spacing={2}>
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          spacing={2}
+          alignItems={{ xs: 'stretch', md: 'center' }}
+          justifyContent="space-between"
+        >
+          <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+            <Button variant="outlined" size="small" onClick={goToPrevious}>
+              ‹
+            </Button>
+            <Button variant="outlined" size="small" onClick={goToToday}>
+              Today
+            </Button>
+            <Button variant="outlined" size="small" onClick={goToNext}>
+              ›
+            </Button>
+          </Stack>
+
+          <Typography variant="h5" sx={{ minWidth: 220, textAlign: { xs: 'left', md: 'center' } }}>
+            {formattedDate}
+          </Typography>
         </Stack>
 
-        <Typography variant="h5" sx={{ minWidth: 220 }}>
-          {formattedDate}
-        </Typography>
-
-        <Stack direction="row" spacing={4} alignItems="center">
-          <Stack direction="row" spacing={1} alignItems="center">
+        <Stack
+          direction={{ xs: 'column', lg: 'row' }}
+          spacing={2}
+          alignItems={{ xs: 'stretch', lg: 'center' }}
+          justifyContent="space-between"
+        >
+          <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
             <Button
               variant={viewType === 'monthly' ? 'contained' : 'outlined'}
               size="small"
@@ -73,12 +79,27 @@ export function CalendarHeader() {
               Day
             </Button>
           </Stack>
-          <Button variant="contained" size="small" onClick={() => setIsDialogOpen(true)}>
-            Add event
-          </Button>
-        </Stack>
 
-        <TimezoneSelect timezone={selectedTimezone} onSelectTimezone={setSelectedTimezone} />
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={2}
+            alignItems={{ xs: 'stretch', sm: 'center' }}
+            sx={{ width: { xs: '100%', lg: 'auto' }, ml: { lg: 'auto' } }}
+          >
+            <Button variant="contained" size="small" onClick={() => setIsDialogOpen(true)}>
+              Add event
+            </Button>
+            <Box
+              sx={{
+                minWidth: { xs: '100%', sm: 240 },
+                width: { xs: '100%', sm: 300 },
+                '& .MuiAutocomplete-root': { width: '100%' },
+              }}
+            >
+              <TimezoneSelect timezone={selectedTimezone} onSelectTimezone={setSelectedTimezone} />
+            </Box>
+          </Stack>
+        </Stack>
       </Stack>
 
       {isDialogOpen && (

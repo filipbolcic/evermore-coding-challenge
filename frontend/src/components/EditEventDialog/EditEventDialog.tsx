@@ -100,7 +100,7 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
                 )}
               />
 
-              <Stack direction="row" spacing={1}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
                 <Controller
                   name="startDate"
                   control={control}
@@ -139,7 +139,7 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
                 />
               </Stack>
 
-              <Stack direction="row" spacing={1}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
                 <Controller
                   name="endDate"
                   control={control}
@@ -182,12 +182,14 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
                 name="timezone"
                 control={control}
                 render={({ field }) => (
-                  <TimezoneSelect timezone={field.value} onSelectTimezone={field.onChange} />
+                  <Stack sx={{ width: '100%', '& .MuiAutocomplete-root': { width: '100%' } }}>
+                    <TimezoneSelect timezone={field.value} onSelectTimezone={field.onChange} />
+                  </Stack>
                 )}
               />
             </Stack>
           </DialogContent>
-          <DialogActions>
+          <DialogActions sx={{ flexWrap: 'wrap', gap: 1 }}>
             {canDelete && (
               <Button color="error" onClick={() => setIsDeleteDialogOpen(true)} type="button" sx={{ mr: 'auto' }}>
                 Delete

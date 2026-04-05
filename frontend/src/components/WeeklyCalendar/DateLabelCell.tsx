@@ -13,15 +13,17 @@ export const DateLabelCell = ({ date, isToday, isLast }: Props) => {
     <Box
       sx={{
         gridColumn: `date-${dateFormat(date)}`,
-        p: 2,
+        px: { xs: 1, sm: 1.5, md: 2 },
+        py: { xs: 0.75, sm: 1, md: 1.25 },
         borderBottom: '1px solid',
         borderRight: !isLast ? '1px solid' : undefined,
         borderColor: 'inherit',
       }}
     >
       <Typography
-        variant="h6"
         sx={{
+          fontSize: { xs: '0.8rem', sm: '0.95rem', md: '1.05rem' },
+          lineHeight: 1.2,
           color: isToday ? 'primary.main' : undefined,
           fontWeight: isToday ? 'bold' : undefined,
         }}

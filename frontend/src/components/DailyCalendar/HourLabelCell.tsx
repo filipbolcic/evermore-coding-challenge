@@ -23,8 +23,9 @@ export const HourLabelCell = ({ hour, isCurrentHour, isLastHour }: Props) => {
       }}
     >
       <Typography
-        variant="caption"
         sx={{
+          fontSize: { xs: '0.8rem', sm: '0.9rem' },
+          lineHeight: 1.1,
           fontWeight: isCurrentHour ? 'bold' : 'normal',
           color: isCurrentHour ? 'primary.main' : 'text.secondary',
         }}

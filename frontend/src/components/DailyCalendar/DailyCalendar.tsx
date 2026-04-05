@@ -8,6 +8,9 @@ import { HOUR_GRID_ROWS, HOUR_LIST } from '../utils/const';
 import { EventCell } from './EventCell';
 import { HourLabelCell } from './HourLabelCell';
 
+const MIN_EVENTS_COL_WIDTH = 200;
+const MIN_GRID_WIDTH = 72 + MIN_EVENTS_COL_WIDTH;
+
 export function DailyCalendar() {
   const { selectedDate, selectedTimezone } = useCalendarStore();
 
@@ -20,7 +23,7 @@ export function DailyCalendar() {
   return (
     <Stack spacing={0}>
       <Box sx={{ p: 2, backgroundColor: 'background.default' }}>
-        <Typography variant="h5">
+        <Typography sx={{ fontSize: { xs: '1.6rem', sm: '1.9rem' }, fontWeight: 500 }}>
           {format(selectedDate, 'EEEE, MMMM d, yyyy')}
           {isToday && (
             <Typography component="span" sx={{ ml: 1, color: 'primary.main', fontWeight: 'bold' }}>
@@ -30,49 +33,53 @@ export function DailyCalendar() {
         </Typography>
       </Box>
 
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: '[hour-label] 72px [events] minmax(0, 1fr) [events-end]',
-          gridTemplateRows: HOUR_GRID_ROWS,
-          borderColor: 'divider',
-          borderRadius: 1,
-          overflow: 'hidden',
-        }}
-      >
-        {HOUR_LIST.map((_, hour) => (
-          <HourLabelCell
-            key={`hour-${hour}`}
-            hour={hour}
-            isCurrentHour={isToday && currentHour === hour}
-            isLastHour={hour === 23}
-          />
-        ))}
+      <Box sx={{ width: '100%', overflowX: 'auto' }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: `[hour-label] 72px [events] minmax(${MIN_EVENTS_COL_WIDTH}px, 1fr) [events-end]`,
+            gridTemplateRows: HOUR_GRID_ROWS,
+            borderColor: 'divider',
+            borderRadius: 1,
+            overflow: 'hidden',
+            minWidth: MIN_GRID_WIDTH,
+            width: `max(100%, ${MIN_GRID_WIDTH}px)`,
+          }}
+        >
+          {HOUR_LIST.map((_, hour) => (
+            <HourLabelCell
+              key={`hour-${hour}`}
+              hour={hour}
+              isCurrentHour={isToday && currentHour === hour}
+              isLastHour={hour === 23}
+            />
+          ))}
 
-        {HOUR_LIST.map((_, hour) => (
-          <Box
-            key={`slot-${hour}`}
-            sx={{
-              gridColumn: 'events',
-              gridRow: `hour-${hour}`,
-              borderBottom: hour !== 23 ? '1px solid' : undefined,
-              borderColor: 'inherit',
-              backgroundColor: 'background.paper',
-            }}
-          />
-        ))}
+          {HOUR_LIST.map((_, hour) => (
+            <Box
+              key={`slot-${hour}`}
+              sx={{
+                gridColumn: 'events',
+                gridRow: `hour-${hour}`,
+                borderBottom: hour !== 23 ? '1px solid' : undefined,
+                borderColor: 'inherit',
+                backgroundColor: 'background.paper',
+              }}
+            />
+          ))}
 
-        {dayEvents.map((event) => (
-          <Box
-            key={`event-${event.id}`}
-            sx={{
-              gridColumn: 'events',
-              gridRow: `hour-${event.hourStart} / hour-${event.hourEnd}`,
-            }}
-          >
-            <EventCell {...event} />
-          </Box>
-        ))}
+          {dayEvents.map((event) => (
+            <Box
+              key={`event-${event.id}`}
+              sx={{
+                gridColumn: 'events',
+                gridRow: `hour-${event.hourStart} / hour-${event.hourEnd}`,
+              }}
+            >
+              <EventCell {...event} />
+            </Box>
+          ))}
+        </Box>
       </Box>
     </Stack>
   );
