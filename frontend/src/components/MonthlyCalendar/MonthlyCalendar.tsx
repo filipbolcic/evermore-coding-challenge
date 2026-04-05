@@ -21,8 +21,8 @@ export function MonthlyCalendar() {
   const monthEnd = endOfMonth(selectedDate, { in: tz(selectedTimezone) });
 
   //todo this should be configurable
-  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
-  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
+  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 });
+  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
 
   const calendarDays = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
   return (

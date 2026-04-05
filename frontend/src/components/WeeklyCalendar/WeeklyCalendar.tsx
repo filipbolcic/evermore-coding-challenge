@@ -13,10 +13,8 @@ import { DateLabelCell } from './DateLabelCell';
 export function WeeklyCalendar() {
   const { selectedDate, selectedTimezone } = useCalendarStore();
 
-  const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0, in: tz(selectedTimezone) });
+  const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1, in: tz('UTC') });
   const weekDays = Array.from({ length: 7 }, (_, index) => add(weekStart, { days: index }));
-
-  console.log('weekDays', weekDays);
 
   const weeklyGridColumns =
     '[hour-label] 72px ' +
