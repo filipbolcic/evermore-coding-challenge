@@ -18,16 +18,22 @@ function getSegmentForDate(event: MockEvent, targetDate: string, timezone: strin
   const eventStartDate = dateFormat(eventStart);
   const eventEndDate = dateFormat(eventEnd);
 
-  const startsBeforeDay = eventStartDate < targetDate;
-  const endsAfterDay = eventEndDate > targetDate;
-
-  if (eventStartDate > targetDate || eventEndDate < targetDate) {
+  const isOutOfBoundsEvent = eventStartDate > targetDate || eventEndDate < targetDate;
+  if (isOutOfBoundsEvent) {
     return null;
   }
+
+  const startsBeforeDay = eventStartDate < targetDate;
+  const endsAfterDay = eventEndDate > targetDate;
 
   const startHour = startsBeforeDay ? 0 : eventStart.getHours();
   const endHour = endsAfterDay ? 24 : eventEnd.getHours();
   const endMinute = endsAfterDay ? 0 : eventEnd.getMinutes();
+
+  const isMidnightEndingEvent = eventEndDate === targetDate && endHour === 0 && endMinute === 0;
+  if (isMidnightEndingEvent) {
+    return null;
+  }
 
   const eventSegment: CalendarEventSegment = {
     id: event.id,
