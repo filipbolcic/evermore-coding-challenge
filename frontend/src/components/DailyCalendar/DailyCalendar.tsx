@@ -3,7 +3,6 @@ import { Box, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import { useCalendarStore } from '../../stores/calendarStore';
 import { dateFormat } from '../../utils/date';
-import { MOCK_EVENTS } from '../../utils/mockData';
 import { getDailyEventSegments } from '../utils';
 import { HOUR_GRID_ROWS, HOUR_LIST } from '../utils/const';
 import { EventCell } from './EventCell';
@@ -15,7 +14,8 @@ export function DailyCalendar() {
   const now = TZDateMini.tz(selectedTimezone);
   const currentHour = now.getHours();
   const isToday = dateFormat(now) === selectedDate;
-  const dayEvents = getDailyEventSegments(MOCK_EVENTS, selectedDate, selectedTimezone);
+  const { events } = useCalendarStore();
+  const dayEvents = getDailyEventSegments(events, selectedDate, selectedTimezone);
 
   return (
     <Stack spacing={0}>

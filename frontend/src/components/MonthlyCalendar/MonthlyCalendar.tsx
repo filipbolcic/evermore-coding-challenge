@@ -11,7 +11,7 @@ import {
   startOfWeek,
 } from 'date-fns';
 import { useCalendarStore } from '../../stores/calendarStore';
-import { MOCK_EVENTS } from '../../utils/mockData';
+import type { MockEvent } from '../../utils/mockData';
 import { DayCell } from './DayCell';
 
 export function MonthlyCalendar() {
@@ -19,6 +19,8 @@ export function MonthlyCalendar() {
 
   const monthStart = startOfMonth(selectedDate, { in: tz(selectedTimezone) });
   const monthEnd = endOfMonth(selectedDate, { in: tz(selectedTimezone) });
+
+  const { events: calendarEvents } = useCalendarStore();
 
   //todo this should be configurable
   const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 });
@@ -37,7 +39,7 @@ export function MonthlyCalendar() {
 
       <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
         {calendarDays.map((day, index) => {
-          const events = getEventsForDay(day, selectedTimezone);
+          const events = getEventsForDay(day, selectedTimezone, calendarEvents);
           const isInCurrentMonth = isSameMonth(day, selectedDate);
           const isCurrentDay = isToday(day);
 
@@ -56,8 +58,8 @@ export function MonthlyCalendar() {
   );
 }
 
-function getEventsForDay(day: Date, timezone: string) {
-  const todayEvents = MOCK_EVENTS.filter((e) => {
+function getEventsForDay(day: Date, timezone: string, events: MockEvent[]) {
+  const todayEvents = events.filter((e) => {
     const eventDate = new TZDateMini(e.startUtc, timezone);
     return isSameDay(eventDate, day);
   });

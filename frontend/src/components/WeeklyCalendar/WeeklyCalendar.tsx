@@ -3,7 +3,6 @@ import { Box, Stack } from '@mui/material';
 import { add, isSameDay, startOfWeek } from 'date-fns';
 import { useCalendarStore } from '../../stores/calendarStore';
 import { dateFormat } from '../../utils/date';
-import { MOCK_EVENTS } from '../../utils/mockData';
 import { EventCell } from '../DailyCalendar/EventCell';
 import { HourLabelCell } from '../DailyCalendar/HourLabelCell';
 import { getWeeklyEventSegments } from '../utils';
@@ -24,7 +23,8 @@ export function WeeklyCalendar() {
   const todayInTimezone = TZDateMini.tz(selectedTimezone);
   const currentHour = todayInTimezone.getHours();
 
-  const events = getWeeklyEventSegments(MOCK_EVENTS, weekDays, selectedTimezone);
+  const { events } = useCalendarStore();
+  const eventSegments = getWeeklyEventSegments(events, weekDays, selectedTimezone);
 
   return (
     <Stack spacing={1}>
@@ -70,7 +70,7 @@ export function WeeklyCalendar() {
           />
         ))}
 
-        {events.map((event) => (
+        {eventSegments.map((event) => (
           <Box
             key={`event-${event.date}-${event.id}`}
             sx={{
