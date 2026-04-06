@@ -31,6 +31,16 @@ npm run dev
 
 The app will be available at **http://localhost:5173**.
 
+### Environment Variables
+
+Create a `frontend/.env` file and define the backend base URL:
+
+```bash
+VITE_API_URL=http://localhost:3000
+```
+
+The frontend API helpers in `src/api/` use this value for all backend requests.
+
 ### DevTools
 
 - **TanStack Router DevTools:** Located at the bottom-right of the screen. Use this to visualize the route tree and active matches.
