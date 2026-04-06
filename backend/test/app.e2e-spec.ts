@@ -24,6 +24,13 @@ describe('EventsController (e2e)', () => {
           startUtc: '2026-04-01T09:00:00.000Z',
           endUtc: '2026-04-01T10:00:00.000Z',
         }),
+        update: jest.fn().mockResolvedValue({
+          id: 'event-1',
+          title: 'Updated Call',
+          startUtc: '2026-04-01T11:00:00.000Z',
+          endUtc: '2026-04-01T12:00:00.000Z',
+        }),
+        remove: jest.fn().mockResolvedValue(undefined),
       })
       .compile();
 
@@ -50,5 +57,24 @@ describe('EventsController (e2e)', () => {
         startUtc: '2026-04-01T09:00:00.000Z',
         endUtc: '2026-04-01T10:00:00.000Z',
       });
+  });
+
+  it('/events/:id (PATCH)', () => {
+    return request(app.getHttpServer())
+      .patch('/events/event-1')
+      .send({
+        title: 'Updated Call',
+      })
+      .expect(200)
+      .expect({
+        id: 'event-1',
+        title: 'Updated Call',
+        startUtc: '2026-04-01T11:00:00.000Z',
+        endUtc: '2026-04-01T12:00:00.000Z',
+      });
+  });
+
+  it('/events/:id (DELETE)', () => {
+    return request(app.getHttpServer()).delete('/events/event-1').expect(204);
   });
 });
