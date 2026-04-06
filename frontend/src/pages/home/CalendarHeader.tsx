@@ -2,7 +2,7 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { format, roundToNearestHours } from 'date-fns';
 import { useState } from 'react';
 import { TimezoneSelect } from '../../components/TimezoneSelect';
-import { useCalendarStore } from '../../stores/calendarStore';
+import { useCalendarStore } from '../../stores/calendar';
 import { EditEventDialog } from './EditEventDialog';
 import { getEditEventBaseValues } from './EditEventDialog/utils';
 

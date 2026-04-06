@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { isSameMonth, isToday } from 'date-fns';
 import { useEvents } from '../../../hooks/api';
-import { useCalendarStore } from '../../../stores/calendarStore';
+import { useCalendarStore } from '../../../stores/calendar';
 import { DayCell } from './DayCell';
 import { getEventsForDay, getMonthlyCalendarDays } from './utils';
 import { MIN_CALENDAR_WIDTH, MIN_COL_WIDTH, WEEK_DAY_LABELS } from './utils/const';

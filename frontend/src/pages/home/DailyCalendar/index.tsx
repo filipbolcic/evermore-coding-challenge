@@ -2,7 +2,7 @@ import { TZDateMini } from '@date-fns/tz';
 import { Box, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import { useEvents } from '../../../hooks/api';
-import { useCalendarStore } from '../../../stores/calendarStore';
+import { useCalendarStore } from '../../../stores/calendar';
 import { dateFormat } from '../../../utils/date';
 import { getDailyEventSegments } from '../utils';
 import { HOUR_GRID_ROWS, HOUR_LIST } from '../utils/const';

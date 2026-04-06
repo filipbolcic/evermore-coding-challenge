@@ -1,5 +1,5 @@
 import { Stack, Typography } from '@mui/material';
-import { useCalendarStore } from '../../stores/calendarStore';
+import { useCalendarStore } from '../../stores/calendar';
 import { CalendarHeader } from './CalendarHeader';
 import { DailyCalendar } from './DailyCalendar';
 import { MonthlyCalendar } from './MonthlyCalendar';

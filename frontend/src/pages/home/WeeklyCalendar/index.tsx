@@ -2,7 +2,7 @@ import { TZDateMini } from '@date-fns/tz';
 import { Box, Stack } from '@mui/material';
 import { isSameDay } from 'date-fns';
 import { useEvents } from '../../../hooks/api';
-import { useCalendarStore } from '../../../stores/calendarStore';
+import { useCalendarStore } from '../../../stores/calendar';
 import { dateFormat } from '../../../utils/date';
 import { EventCell } from '../DailyCalendar/EventCell';
 import { HourLabelCell } from '../DailyCalendar/HourLabelCell';

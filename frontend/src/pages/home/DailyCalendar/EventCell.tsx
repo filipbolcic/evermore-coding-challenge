@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import type { Event } from '../../../api/events/types';
-import { useCalendarStore } from '../../../stores/calendarStore';
+import { useCalendarStore } from '../../../stores/calendar';
 import { EditEventDialog } from '../EditEventDialog';
 import { getEditEventValuesFromEvent } from '../EditEventDialog/utils';
 import { type CalendarEventSegment } from '../utils';

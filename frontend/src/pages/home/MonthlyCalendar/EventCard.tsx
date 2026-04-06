@@ -2,7 +2,7 @@ import { TZDateMini } from '@date-fns/tz';
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import type { Event } from '../../../api/events/types';
-import { useCalendarStore } from '../../../stores/calendarStore';
+import { useCalendarStore } from '../../../stores/calendar';
 import { timeFormat } from '../../../utils/date';
 import { EditEventDialog } from '../EditEventDialog';
 import { getEditEventValuesFromEvent } from '../EditEventDialog/utils';
