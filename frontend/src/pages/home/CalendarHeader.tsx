@@ -1,12 +1,18 @@
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { format, roundToNearestHours } from 'date-fns';
 import { useState } from 'react';
 import { TimezoneSelect } from '../../components/TimezoneSelect';
 import { useToast } from '../../components/Toast';
 import { useCreateEvent } from '../../hooks/api/events';
-import { useCalendarStore } from '../../stores/calendar';
+import { useCalendarStore, type CalendarViewType } from '../../stores/calendar';
 import { EditEventDialog } from './EditEventDialog';
 import { getEditEventBaseValues } from './EditEventDialog/utils';
+
+const CALENDAR_VIEW_OPTIONS: { value: CalendarViewType; label: string }[] = [
+  { value: 'monthly', label: 'Month' },
+  { value: 'weekly', label: 'Week' },
+  { value: 'daily', label: 'Day' },
+];
 
 export function CalendarHeader() {
   const {
@@ -60,29 +66,22 @@ export function CalendarHeader() {
           alignItems={{ xs: 'stretch', lg: 'center' }}
           justifyContent="space-between"
         >
-          <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-            <Button
-              variant={viewType === 'monthly' ? 'contained' : 'outlined'}
+          <Box sx={{ minWidth: { xs: '100%', sm: 180 }, width: { xs: '100%', sm: 200 } }}>
+            <TextField
+              select
+              fullWidth
+              label="Calendar type"
               size="small"
-              onClick={() => setViewType('monthly')}
+              value={viewType}
+              onChange={(event) => setViewType(event.target.value as CalendarViewType)}
             >
-              Month
-            </Button>
-            <Button
-              variant={viewType === 'weekly' ? 'contained' : 'outlined'}
-              size="small"
-              onClick={() => setViewType('weekly')}
-            >
-              Week
-            </Button>
-            <Button
-              variant={viewType === 'daily' ? 'contained' : 'outlined'}
-              size="small"
-              onClick={() => setViewType('daily')}
-            >
-              Day
-            </Button>
-          </Stack>
+              {CALENDAR_VIEW_OPTIONS.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
 
           <Stack
             direction={{ xs: 'column', sm: 'row' }}

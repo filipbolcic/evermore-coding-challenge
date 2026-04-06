@@ -35,6 +35,8 @@ function getSegmentForDate(event: Event, targetDate: string, timezone: string) {
     return null;
   }
 
+  //todo add event start/end time -> they are needed in EventCell to send to update dialog
+  //     also clean up this data type so its more logical to use
   const eventSegment: CalendarEventSegment = {
     id: event.id,
     title: event.title,
