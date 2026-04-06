@@ -44,6 +44,16 @@ You can spin up Prisma Studio to view and edit data in your browser:
 npx prisma studio
 ```
 
+### Seeding Data
+
+To populate the database with a few sample events:
+
+```bash
+npm run db:seed
+```
+
+This seed script clears the existing `events` table and inserts a fresh sample set.
+
 ## 📡 API Endpoints
 
 The server runs on **http://localhost:3000** by default.
