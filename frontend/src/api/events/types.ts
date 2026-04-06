@@ -5,4 +5,4 @@ export interface Event {
   endUtc: string;
 }
 
-export type EditEventValues = Omit<Event, 'id'>;
+export type UpdateEventValues = Omit<Event, 'id'>;

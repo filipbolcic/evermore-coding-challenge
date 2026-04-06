@@ -2,6 +2,8 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { format, roundToNearestHours } from 'date-fns';
 import { useState } from 'react';
 import { TimezoneSelect } from '../../components/TimezoneSelect';
+import { useToast } from '../../components/Toast';
+import { useCreateEvent } from '../../hooks/api';
 import { useCalendarStore } from '../../stores/calendar';
 import { EditEventDialog } from './EditEventDialog';
 import { getEditEventBaseValues } from './EditEventDialog/utils';
@@ -17,6 +19,9 @@ export function CalendarHeader() {
     goToToday,
     setSelectedTimezone,
   } = useCalendarStore();
+
+  const { mutate: createEvent } = useCreateEvent();
+  const { showToast, toast } = useToast();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -105,10 +110,20 @@ export function CalendarHeader() {
         <EditEventDialog
           isOpen={isDialogOpen}
           onClose={() => setIsDialogOpen(false)}
-          onSubmit={console.log}
+          onSubmit={(e) =>
+            createEvent(e, {
+              onSuccess: () => {
+                showToast(`Successfully created event ${e.title}.`, 'success');
+                setIsDialogOpen(false);
+              },
+              onError: () => showToast(`Error while creating event`, 'error'),
+            })
+          }
           values={getEditEventBaseValues(roundToNearestHours(new Date()), selectedTimezone)}
         />
       )}
+
+      {toast}
     </>
   );
 }

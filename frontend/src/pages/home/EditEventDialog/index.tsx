@@ -13,7 +13,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
-import type { Event } from '../../../api/events/types';
+import type { UpdateEventValues } from '../../../api/events/types';
 import { ConfirmDialog } from '../../../components/ConfirmDialog';
 import { TimezoneSelect } from '../../../components/TimezoneSelect';
 import { UTC_TIMEZONE } from '../../../utils/date';
@@ -23,7 +23,7 @@ interface Props {
   isOpen: boolean;
   values: EditEventFormValues;
   eventId?: string;
-  onSubmit: (event: Event) => void;
+  onSubmit: (event: UpdateEventValues) => void;
   onDelete?: () => void;
   onClose: () => void;
 }
@@ -34,7 +34,6 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
   const {
     control,
     handleSubmit,
-    reset,
     watch,
     formState: { errors },
   } = useEditEventForm(values);
@@ -56,18 +55,7 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
     const startUtc = tzStartDateTime.withTimeZone(UTC_TIMEZONE);
     const endUtc = tzEndDateTime.withTimeZone(UTC_TIMEZONE);
 
-    onSubmit({
-      id: eventId ?? crypto.randomUUID(),
-      title,
-      startUtc: startUtc.toISOString(),
-      endUtc: endUtc.toISOString(),
-    });
-    handleClose();
-  }
-
-  function handleClose() {
-    reset();
-    onClose();
+    onSubmit({ title, startUtc: startUtc.toISOString(), endUtc: endUtc.toISOString() });
   }
 
   function handleDeleteConfirm() {
@@ -76,12 +64,12 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
     }
 
     onDelete();
-    handleClose();
+    onClose();
   }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth="sm">
+      <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="sm">
         <form onSubmit={handleSubmit(handleFormSubmit)}>
           <DialogTitle>{eventId ? 'Edit event' : 'Add event'}</DialogTitle>
           <DialogContent>
@@ -201,7 +189,7 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
                 Delete
               </Button>
             )}
-            <Button onClick={handleClose} type="button">
+            <Button onClick={onClose} type="button">
               Cancel
             </Button>
             <Button variant="contained" type="submit">
