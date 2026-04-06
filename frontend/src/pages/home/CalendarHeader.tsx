@@ -3,7 +3,7 @@ import { format, roundToNearestHours } from 'date-fns';
 import { useState } from 'react';
 import { TimezoneSelect } from '../../components/TimezoneSelect';
 import { useToast } from '../../components/Toast';
-import { useCreateEvent } from '../../hooks/api';
+import { useCreateEvent } from '../../hooks/api/events';
 import { useCalendarStore } from '../../stores/calendar';
 import { EditEventDialog } from './EditEventDialog';
 import { getEditEventBaseValues } from './EditEventDialog/utils';

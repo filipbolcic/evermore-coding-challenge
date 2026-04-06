@@ -1,6 +1,8 @@
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import type { Event } from '../../../api/events/types';
+import { useToast } from '../../../components/Toast';
+import { useDeleteEvent } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
 import { EditEventDialog } from '../EditEventDialog';
 import { getEditEventValuesFromEvent } from '../EditEventDialog/utils';
@@ -10,8 +12,10 @@ type Props = CalendarEventSegment & { events: Event[] };
 
 export const EventCell = ({ id, title, startTime, endTime, events }: Props) => {
   const { selectedTimezone } = useCalendarStore();
+  const { mutate: deleteEvent } = useDeleteEvent();
 
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { showToast, toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const sourceEvent = events.find((event) => event.id === id)!;
   const values = getEditEventValuesFromEvent(sourceEvent, selectedTimezone);
@@ -37,13 +41,13 @@ export const EventCell = ({ id, title, startTime, endTime, events }: Props) => {
           cursor: 'pointer',
           ':hover': { zIndex: 10, boxShadow: 3 },
         }}
-        onClick={() => setIsEditDialogOpen(true)}
+        onClick={() => setIsDialogOpen(true)}
         role="button"
         tabIndex={0}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-            setIsEditDialogOpen(true);
+            setIsDialogOpen(true);
           }
         }}
       >
@@ -54,16 +58,25 @@ export const EventCell = ({ id, title, startTime, endTime, events }: Props) => {
           {startTime} – {endTime}
         </Typography>
       </Box>
-      {isEditDialogOpen && (
+      {isDialogOpen && (
         <EditEventDialog
-          isOpen={isEditDialogOpen}
-          eventId={sourceEvent?.id}
+          isOpen={isDialogOpen}
           values={values}
-          onClose={() => setIsEditDialogOpen(false)}
+          onClose={() => setIsDialogOpen(false)}
           onSubmit={console.log}
-          onDelete={console.log}
+          onDelete={() =>
+            deleteEvent(id, {
+              onSuccess: () => {
+                showToast(`Event successfully deleted.`, 'success');
+                setIsDialogOpen(false);
+              },
+              onError: () => showToast(`Error while deleting event`, 'error'),
+            })
+          }
         />
       )}
+
+      {toast}
     </>
   );
 };

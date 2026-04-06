@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { isSameMonth, isToday } from 'date-fns';
-import { useEvents } from '../../../hooks/api';
+import { useEvents } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
 import { DayCell } from './DayCell';
 import { getEventsForDay, getMonthlyCalendarDays } from './utils';

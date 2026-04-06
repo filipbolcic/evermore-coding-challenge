@@ -11,3 +11,9 @@ export function createEvent(input: UpdateEventValues) {
     body: JSON.stringify(input),
   });
 }
+
+export function deleteEvent(id: string) {
+  return apiFetch<Event>(`/events/${id}`, {
+    method: 'DELETE',
+  });
+}

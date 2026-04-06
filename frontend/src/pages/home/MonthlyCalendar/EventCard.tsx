@@ -2,6 +2,8 @@ import { TZDateMini } from '@date-fns/tz';
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import type { Event } from '../../../api/events/types';
+import { useToast } from '../../../components/Toast';
+import { useDeleteEvent } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
 import { timeFormat } from '../../../utils/date';
 import { EditEventDialog } from '../EditEventDialog';
@@ -13,8 +15,10 @@ interface Props {
 
 export function EventCard({ event }: Props) {
   const { selectedTimezone } = useCalendarStore();
+  const { mutate: deleteEvent } = useDeleteEvent();
 
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { showToast, toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const values = getEditEventValuesFromEvent(event, selectedTimezone);
   const startTime = timeFormat(new TZDateMini(event.startUtc, selectedTimezone));
@@ -30,13 +34,13 @@ export function EventCard({ event }: Props) {
           borderRadius: 0.5,
           cursor: 'pointer',
         }}
-        onClick={() => setIsEditDialogOpen(true)}
+        onClick={() => setIsDialogOpen(true)}
         role="button"
         tabIndex={0}
         onKeyDown={(keyboardEvent) => {
           if (keyboardEvent.key === 'Enter' || keyboardEvent.key === ' ') {
             keyboardEvent.preventDefault();
-            setIsEditDialogOpen(true);
+            setIsDialogOpen(true);
           }
         }}
       >
@@ -53,16 +57,24 @@ export function EventCard({ event }: Props) {
         </Typography>
       </Box>
 
-      {isEditDialogOpen && (
+      {isDialogOpen && (
         <EditEventDialog
-          isOpen={isEditDialogOpen}
-          eventId={event.id}
+          isOpen={isDialogOpen}
           values={values}
-          onClose={() => setIsEditDialogOpen(false)}
+          onClose={() => setIsDialogOpen(false)}
           onSubmit={console.log}
-          onDelete={console.log}
+          onDelete={() =>
+            deleteEvent(event.id, {
+              onSuccess: () => {
+                showToast(`Event successfully deleted.`, 'success');
+                setIsDialogOpen(false);
+              },
+              onError: () => showToast(`Error while deleting event`, 'error'),
+            })
+          }
         />
       )}
+      {toast}
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { TZDateMini } from '@date-fns/tz';
 import { Box, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
-import { useEvents } from '../../../hooks/api';
+import { useEvents } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
 import { dateFormat } from '../../../utils/date';
 import { getDailyEventSegments } from '../utils';

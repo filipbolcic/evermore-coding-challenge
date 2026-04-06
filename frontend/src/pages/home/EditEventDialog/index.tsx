@@ -22,13 +22,20 @@ import { getTzDate, useEditEventForm, type EditEventFormValues } from './utils';
 interface Props {
   isOpen: boolean;
   values: EditEventFormValues;
-  eventId?: string;
+  isEditMode?: boolean;
   onSubmit: (event: UpdateEventValues) => void;
   onDelete?: () => void;
   onClose: () => void;
 }
 
-export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, onDelete }: Props) {
+export function EditEventDialog({
+  isOpen,
+  values,
+  isEditMode,
+  onClose,
+  onSubmit,
+  onDelete,
+}: Props) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const {
@@ -37,9 +44,6 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
     watch,
     formState: { errors },
   } = useEditEventForm(values);
-
-  const currentTitle = watch('title');
-  const canDelete = Boolean(eventId && onDelete);
 
   function handleFormSubmit({
     startDate,
@@ -58,20 +62,13 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
     onSubmit({ title, startUtc: startUtc.toISOString(), endUtc: endUtc.toISOString() });
   }
 
-  function handleDeleteConfirm() {
-    if (!onDelete) {
-      return;
-    }
-
-    onDelete();
-    onClose();
-  }
+  const currentTitle = watch('title');
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="sm">
         <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <DialogTitle>{eventId ? 'Edit event' : 'Add event'}</DialogTitle>
+          <DialogTitle>{isEditMode ? 'Edit event' : 'Add event'}</DialogTitle>
           <DialogContent>
             <Stack spacing={2} sx={{ mt: 1 }}>
               <Controller
@@ -179,7 +176,7 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
             </Stack>
           </DialogContent>
           <DialogActions sx={{ flexWrap: 'wrap', gap: 1 }}>
-            {canDelete && (
+            {onDelete && (
               <Button
                 color="error"
                 onClick={() => setIsDeleteDialogOpen(true)}
@@ -204,7 +201,7 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
         confirmLabel="Delete"
         message={`Are you sure you want to delete "${currentTitle}"?`}
         onClose={() => setIsDeleteDialogOpen(false)}
-        onConfirm={handleDeleteConfirm}
+        onConfirm={() => onDelete?.()}
       />
     </LocalizationProvider>
   );
