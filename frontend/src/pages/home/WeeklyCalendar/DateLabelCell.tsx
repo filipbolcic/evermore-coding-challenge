@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { format } from 'date-fns';
-import { dateFormat } from '../../utils/date';
+import { dateFormat } from '../../../utils/date';
 
 interface Props {
   date: Date;

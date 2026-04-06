@@ -13,10 +13,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
-import type { MockEvent } from '../../types/date';
-import { UTC_TIMEZONE } from '../../utils/date';
-import { ConfirmDialog } from '../ConfirmDialog';
-import { TimezoneSelect } from '../TimezoneSelect';
+import { ConfirmDialog } from '../../../components/ConfirmDialog';
+import { TimezoneSelect } from '../../../components/TimezoneSelect';
+import type { MockEvent } from '../../../types/date';
+import { UTC_TIMEZONE } from '../../../utils/date';
 import { getTzDate, useEditEventForm, type EditEventFormValues } from './utils';
 
 interface Props {
@@ -191,7 +191,12 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
           </DialogContent>
           <DialogActions sx={{ flexWrap: 'wrap', gap: 1 }}>
             {canDelete && (
-              <Button color="error" onClick={() => setIsDeleteDialogOpen(true)} type="button" sx={{ mr: 'auto' }}>
+              <Button
+                color="error"
+                onClick={() => setIsDeleteDialogOpen(true)}
+                type="button"
+                sx={{ mr: 'auto' }}
+              >
                 Delete
               </Button>
             )}

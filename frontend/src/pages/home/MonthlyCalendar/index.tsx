@@ -10,8 +10,8 @@ import {
   startOfMonth,
   startOfWeek,
 } from 'date-fns';
-import { useCalendarStore } from '../../stores/calendarStore';
-import type { MockEvent } from '../../types/date';
+import { useCalendarStore } from '../../../stores/calendarStore';
+import type { MockEvent } from '../../../types/date';
 import { DayCell } from './DayCell';
 
 export function MonthlyCalendar() {

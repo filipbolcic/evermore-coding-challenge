@@ -1,8 +1,8 @@
 import { TZDate } from '@date-fns/tz';
 import { addHours } from 'date-fns';
 import { useForm } from 'react-hook-form';
-import type { MockEvent } from '../../types/date';
-import { getLocalWallClockDate } from '../../utils/date';
+import type { MockEvent } from '../../../types/date';
+import { getLocalWallClockDate } from '../../../utils/date';
 
 export interface EditEventFormValues {
   title: string;

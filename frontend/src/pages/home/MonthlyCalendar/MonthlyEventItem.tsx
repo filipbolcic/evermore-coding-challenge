@@ -1,9 +1,9 @@
 import { TZDateMini } from '@date-fns/tz';
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
-import { useCalendarStore } from '../../stores/calendarStore';
-import type { MockEvent } from '../../types/date';
-import { timeFormat } from '../../utils/date';
+import { useCalendarStore } from '../../../stores/calendarStore';
+import type { MockEvent } from '../../../types/date';
+import { timeFormat } from '../../../utils/date';
 import { EditEventDialog } from '../EditEventDialog';
 import { getEditEventValuesFromEvent } from '../EditEventDialog/utils';
 

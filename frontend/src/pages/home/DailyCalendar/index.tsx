@@ -1,8 +1,8 @@
 import { TZDateMini } from '@date-fns/tz';
 import { Box, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
-import { useCalendarStore } from '../../stores/calendarStore';
-import { dateFormat } from '../../utils/date';
+import { useCalendarStore } from '../../../stores/calendarStore';
+import { dateFormat } from '../../../utils/date';
 import { getDailyEventSegments } from '../utils';
 import { HOUR_GRID_ROWS, HOUR_LIST } from '../utils/const';
 import { EventCell } from './EventCell';

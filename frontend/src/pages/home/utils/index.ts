@@ -1,6 +1,6 @@
 import { TZDateMini } from '@date-fns/tz';
-import type { MockEvent } from '../../types/date';
-import { dateFormat, timeFormat } from '../../utils/date';
+import type { MockEvent } from '../../../types/date';
+import { dateFormat, timeFormat } from '../../../utils/date';
 
 export interface CalendarEventSegment {
   id: string;

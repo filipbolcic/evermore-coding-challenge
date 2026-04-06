@@ -1,10 +1,10 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { format, roundToNearestHours } from 'date-fns';
 import { useState } from 'react';
-import { useCalendarStore } from '../stores/calendarStore';
+import { TimezoneSelect } from '../../components/TimezoneSelect';
+import { useCalendarStore } from '../../stores/calendarStore';
 import { EditEventDialog } from './EditEventDialog';
 import { getEditEventBaseValues } from './EditEventDialog/utils';
-import { TimezoneSelect } from './TimezoneSelect';
 
 export function CalendarHeader() {
   const {

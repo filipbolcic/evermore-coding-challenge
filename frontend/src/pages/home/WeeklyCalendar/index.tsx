@@ -1,8 +1,8 @@
 import { tz, TZDateMini } from '@date-fns/tz';
 import { Box, Stack } from '@mui/material';
 import { add, isSameDay, startOfWeek } from 'date-fns';
-import { useCalendarStore } from '../../stores/calendarStore';
-import { dateFormat } from '../../utils/date';
+import { useCalendarStore } from '../../../stores/calendarStore';
+import { dateFormat } from '../../../utils/date';
 import { EventCell } from '../DailyCalendar/EventCell';
 import { HourLabelCell } from '../DailyCalendar/HourLabelCell';
 import { getWeeklyEventSegments } from '../utils';

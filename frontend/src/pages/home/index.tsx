@@ -1,11 +1,11 @@
 import { Stack, Typography } from '@mui/material';
-import { useCalendarStore } from '../stores/calendarStore';
+import { useCalendarStore } from '../../stores/calendarStore';
 import { CalendarHeader } from './CalendarHeader';
 import { DailyCalendar } from './DailyCalendar';
 import { MonthlyCalendar } from './MonthlyCalendar';
 import { WeeklyCalendar } from './WeeklyCalendar';
 
-export function HomeComponent() {
+export function HomePage() {
   const { viewType } = useCalendarStore();
 
   return (
