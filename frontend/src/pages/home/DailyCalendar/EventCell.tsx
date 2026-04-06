@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import type { Event } from '../../../api/events/types';
 import { useToast } from '../../../components/Toast';
-import { useDeleteEvent } from '../../../hooks/api/events';
+import { useDeleteEvent, useUpdateEvent } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
 import { EditEventDialog } from '../EditEventDialog';
 import { getEditEventValuesFromEvent } from '../EditEventDialog/utils';
@@ -12,10 +12,11 @@ type Props = CalendarEventSegment & { events: Event[] };
 
 export const EventCell = ({ id, title, startTime, endTime, events }: Props) => {
   const { selectedTimezone } = useCalendarStore();
-  const { mutate: deleteEvent } = useDeleteEvent();
-
-  const { showToast, toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const { mutate: deleteEvent } = useDeleteEvent();
+  const { mutate: updateEvent } = useUpdateEvent();
+  const { showToast, toast } = useToast();
 
   const sourceEvent = events.find((event) => event.id === id)!;
   const values = getEditEventValuesFromEvent(sourceEvent, selectedTimezone);
@@ -63,7 +64,18 @@ export const EventCell = ({ id, title, startTime, endTime, events }: Props) => {
           isOpen={isDialogOpen}
           values={values}
           onClose={() => setIsDialogOpen(false)}
-          onSubmit={console.log}
+          onSubmit={(e) =>
+            updateEvent(
+              { id, ...e },
+              {
+                onSuccess: () => {
+                  showToast(`Event successfully updated.`, 'success');
+                  setIsDialogOpen(false);
+                },
+                onError: () => showToast(`Error while updating event`, 'error'),
+              }
+            )
+          }
           onDelete={() =>
             deleteEvent(id, {
               onSuccess: () => {

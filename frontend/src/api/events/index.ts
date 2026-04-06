@@ -5,10 +5,17 @@ export function getEvents() {
   return apiFetch<Event[]>('/events');
 }
 
-export function createEvent(input: UpdateEventValues) {
+export function createEvent(values: UpdateEventValues) {
   return apiFetch<Event>('/events', {
     method: 'POST',
-    body: JSON.stringify(input),
+    body: JSON.stringify(values),
+  });
+}
+
+export function updateEvent(id: string, values: UpdateEventValues) {
+  return apiFetch<Event>(`/events/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(values),
   });
 }
 
