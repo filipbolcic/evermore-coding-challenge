@@ -1,9 +1,7 @@
 import { TZDateMini } from '@date-fns/tz';
 import { add, sub } from 'date-fns';
 import { create } from 'zustand';
-import type { MockEvent } from '../types/date';
 import { dateFormat, getBrowserTimezone } from '../utils/date';
-import { MOCK_EVENTS } from '../utils/mockData';
 
 export type CalendarViewType = 'monthly' | 'weekly' | 'daily';
 
@@ -11,23 +9,18 @@ interface CalendarState {
   viewType: CalendarViewType;
   selectedDate: string;
   selectedTimezone: string;
-  events: MockEvent[];
 
   setViewType: (viewType: CalendarViewType) => void;
   goToPrevious: () => void;
   goToNext: () => void;
   goToToday: () => void;
   setSelectedTimezone: (timezone: string) => void;
-  addEvent: (event: MockEvent) => void;
-  updateEvent: (event: MockEvent) => void;
-  deleteEvent: (eventId: string) => void;
 }
 
 export const useCalendarStore = create<CalendarState>((set, get) => ({
   viewType: 'monthly',
   selectedDate: dateFormat(new Date()),
   selectedTimezone: getBrowserTimezone(),
-  events: MOCK_EVENTS,
 
   setViewType: (viewType) => set({ viewType }),
 
@@ -81,18 +74,4 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
   },
 
   setSelectedTimezone: (selectedTimezone) => set({ selectedTimezone }),
-
-  addEvent: (event) => set((state) => ({ events: [...state.events, event] })),
-
-  updateEvent: (event) =>
-    set((state) => ({
-      events: state.events.map((existingEvent) =>
-        existingEvent.id === event.id ? event : existingEvent
-      ),
-    })),
-
-  deleteEvent: (eventId) =>
-    set((state) => ({
-      events: state.events.filter((event) => event.id !== eventId),
-    })),
 }));

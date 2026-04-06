@@ -1,11 +1,11 @@
 import { Paper, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
-import type { MockEvent } from '../../../types/date';
-import { MonthlyEventItem } from './MonthlyEventItem';
+import type { Event } from '../../../api/events/types';
+import { EventCard } from './EventCard';
 
 interface DayCellProps {
   day: Date;
-  events: MockEvent[];
+  events: Event[];
   isInCurrentMonth: boolean;
   isCurrentDay: boolean;
 }
@@ -34,7 +34,7 @@ export function DayCell({ day, events, isInCurrentMonth, isCurrentDay }: DayCell
 
       <Stack spacing={0.25} sx={{ mt: 0.5, maxHeight: 120, overflowY: 'auto' }}>
         {events.map((event) => (
-          <MonthlyEventItem key={event.id} event={event} />
+          <EventCard key={event.id} event={event} />
         ))}
       </Stack>
     </Paper>

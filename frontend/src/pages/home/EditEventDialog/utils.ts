@@ -1,7 +1,7 @@
 import { TZDate } from '@date-fns/tz';
 import { addHours } from 'date-fns';
 import { useForm } from 'react-hook-form';
-import type { MockEvent } from '../../../types/date';
+import type { Event } from '../../../api/events/types';
 import { getLocalWallClockDate } from '../../../utils/date';
 
 export interface EditEventFormValues {
@@ -32,7 +32,7 @@ export function getEditEventBaseValues(startDate: Date, timezone: string) {
   };
 }
 
-export function getEditEventValuesFromEvent(event: MockEvent, timezone: string) {
+export function getEditEventValuesFromEvent(event: Event, timezone: string) {
   const eventStartInTimezone = TZDate.tz(timezone, event.startUtc);
   const eventEndInTimezone = TZDate.tz(timezone, event.endUtc);
 

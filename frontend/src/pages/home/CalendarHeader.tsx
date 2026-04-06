@@ -16,7 +16,6 @@ export function CalendarHeader() {
     goToNext,
     goToToday,
     setSelectedTimezone,
-    addEvent,
   } = useCalendarStore();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -106,7 +105,7 @@ export function CalendarHeader() {
         <EditEventDialog
           isOpen={isDialogOpen}
           onClose={() => setIsDialogOpen(false)}
-          onSubmit={addEvent}
+          onSubmit={console.log}
           values={getEditEventBaseValues(roundToNearestHours(new Date()), selectedTimezone)}
         />
       )}

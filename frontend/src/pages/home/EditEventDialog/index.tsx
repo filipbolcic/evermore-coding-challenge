@@ -13,9 +13,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
+import type { Event } from '../../../api/events/types';
 import { ConfirmDialog } from '../../../components/ConfirmDialog';
 import { TimezoneSelect } from '../../../components/TimezoneSelect';
-import type { MockEvent } from '../../../types/date';
 import { UTC_TIMEZONE } from '../../../utils/date';
 import { getTzDate, useEditEventForm, type EditEventFormValues } from './utils';
 
@@ -23,13 +23,14 @@ interface Props {
   isOpen: boolean;
   values: EditEventFormValues;
   eventId?: string;
-  onSubmit: (event: MockEvent) => void;
+  onSubmit: (event: Event) => void;
   onDelete?: () => void;
   onClose: () => void;
 }
 
 export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, onDelete }: Props) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -37,6 +38,7 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
     watch,
     formState: { errors },
   } = useEditEventForm(values);
+
   const currentTitle = watch('title');
   const canDelete = Boolean(eventId && onDelete);
 
@@ -64,7 +66,6 @@ export function EditEventDialog({ isOpen, values, eventId, onClose, onSubmit, on
   }
 
   function handleClose() {
-    setIsDeleteDialogOpen(false);
     reset();
     onClose();
   }

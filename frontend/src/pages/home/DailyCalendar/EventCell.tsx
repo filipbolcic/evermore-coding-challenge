@@ -1,14 +1,15 @@
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
+import type { Event } from '../../../api/events/types';
 import { useCalendarStore } from '../../../stores/calendarStore';
 import { EditEventDialog } from '../EditEventDialog';
 import { getEditEventValuesFromEvent } from '../EditEventDialog/utils';
 import { type CalendarEventSegment } from '../utils';
 
-type Props = CalendarEventSegment;
+type Props = CalendarEventSegment & { events: Event[] };
 
-export const EventCell = ({ id, title, startTime, endTime }: Props) => {
-  const { events, selectedTimezone, updateEvent, deleteEvent } = useCalendarStore();
+export const EventCell = ({ id, title, startTime, endTime, events }: Props) => {
+  const { selectedTimezone } = useCalendarStore();
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
@@ -59,8 +60,8 @@ export const EventCell = ({ id, title, startTime, endTime }: Props) => {
           eventId={sourceEvent?.id}
           values={values}
           onClose={() => setIsEditDialogOpen(false)}
-          onSubmit={updateEvent}
-          onDelete={() => deleteEvent(sourceEvent.id)}
+          onSubmit={console.log}
+          onDelete={console.log}
         />
       )}
     </>

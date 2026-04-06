@@ -1,18 +1,18 @@
 import { TZDateMini } from '@date-fns/tz';
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
+import type { Event } from '../../../api/events/types';
 import { useCalendarStore } from '../../../stores/calendarStore';
-import type { MockEvent } from '../../../types/date';
 import { timeFormat } from '../../../utils/date';
 import { EditEventDialog } from '../EditEventDialog';
 import { getEditEventValuesFromEvent } from '../EditEventDialog/utils';
 
 interface Props {
-  event: MockEvent;
+  event: Event;
 }
 
-export function MonthlyEventItem({ event }: Props) {
-  const { selectedTimezone, updateEvent, deleteEvent } = useCalendarStore();
+export function EventCard({ event }: Props) {
+  const { selectedTimezone } = useCalendarStore();
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
@@ -59,8 +59,8 @@ export function MonthlyEventItem({ event }: Props) {
           eventId={event.id}
           values={values}
           onClose={() => setIsEditDialogOpen(false)}
-          onSubmit={updateEvent}
-          onDelete={() => deleteEvent(event.id)}
+          onSubmit={console.log}
+          onDelete={console.log}
         />
       )}
     </>

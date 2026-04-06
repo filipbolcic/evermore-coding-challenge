@@ -1,48 +1,29 @@
-import { tz, TZDateMini } from '@date-fns/tz';
 import { Box, Typography } from '@mui/material';
-import {
-  eachDayOfInterval,
-  endOfMonth,
-  endOfWeek,
-  isSameDay,
-  isSameMonth,
-  isToday,
-  startOfMonth,
-  startOfWeek,
-} from 'date-fns';
+import { isSameMonth, isToday } from 'date-fns';
+import { useEvents } from '../../../hooks/api';
 import { useCalendarStore } from '../../../stores/calendarStore';
-import type { MockEvent } from '../../../types/date';
 import { DayCell } from './DayCell';
+import { getEventsForDay, getMonthlyCalendarDays } from './utils';
+import { MIN_CALENDAR_WIDTH, MIN_COL_WIDTH, WEEK_DAY_LABELS } from './utils/const';
 
 export function MonthlyCalendar() {
   const { selectedDate, selectedTimezone } = useCalendarStore();
+  const { data } = useEvents();
 
-  const monthStart = startOfMonth(selectedDate, { in: tz(selectedTimezone) });
-  const monthEnd = endOfMonth(selectedDate, { in: tz(selectedTimezone) });
-
-  const { events: calendarEvents } = useCalendarStore();
-
-  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 });
-  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
-
-  const calendarDays = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
-
-  const weekDayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const minColumnWidth = 180;
-  const minCalendarWidth = weekDayLabels.length * minColumnWidth;
-
+  const calendarDays = getMonthlyCalendarDays(selectedDate, selectedTimezone);
+  const events = data ?? [];
   return (
     <Box sx={{ overflowX: 'auto', width: '100%' }}>
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: `repeat(7, minmax(${minColumnWidth}px, 1fr))`,
+          gridTemplateColumns: `repeat(7, minmax(${MIN_COL_WIDTH}px, 1fr))`,
           gap: 1,
-          minWidth: minCalendarWidth,
-          width: `max(100%, ${minCalendarWidth}px)`,
+          minWidth: MIN_CALENDAR_WIDTH,
+          width: `max(100%, ${MIN_CALENDAR_WIDTH}px)`,
         }}
       >
-        {weekDayLabels.map((day) => (
+        {WEEK_DAY_LABELS.map((day) => (
           <Box key={day} sx={{ p: 1, textAlign: 'center' }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
               {day}
@@ -51,7 +32,7 @@ export function MonthlyCalendar() {
         ))}
 
         {calendarDays.map((day, index) => {
-          const events = getEventsForDay(day, selectedTimezone, calendarEvents);
+          const dayEvents = getEventsForDay(day, selectedTimezone, events);
           const isInCurrentMonth = isSameMonth(day, selectedDate);
           const isCurrentDay = isToday(day);
 
@@ -59,7 +40,7 @@ export function MonthlyCalendar() {
             <DayCell
               key={index}
               day={day}
-              events={events}
+              events={dayEvents}
               isInCurrentMonth={isInCurrentMonth}
               isCurrentDay={isCurrentDay}
             />
@@ -67,16 +48,5 @@ export function MonthlyCalendar() {
         })}
       </Box>
     </Box>
-  );
-}
-
-function getEventsForDay(day: Date, timezone: string, events: MockEvent[]) {
-  const todayEvents = events.filter((e) => {
-    const eventDate = new TZDateMini(e.startUtc, timezone);
-    return isSameDay(eventDate, day);
-  });
-
-  return todayEvents.sort(
-    (a, b) => new Date(a.startUtc).getTime() - new Date(b.startUtc).getTime()
   );
 }

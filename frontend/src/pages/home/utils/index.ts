@@ -1,5 +1,5 @@
 import { TZDateMini } from '@date-fns/tz';
-import type { MockEvent } from '../../../types/date';
+import type { Event } from '../../../api/events/types';
 import { dateFormat, timeFormat } from '../../../utils/date';
 
 export interface CalendarEventSegment {
@@ -12,7 +12,7 @@ export interface CalendarEventSegment {
   hourEnd: number;
 }
 
-function getSegmentForDate(event: MockEvent, targetDate: string, timezone: string) {
+function getSegmentForDate(event: Event, targetDate: string, timezone: string) {
   const eventStart = new TZDateMini(event.startUtc, timezone);
   const eventEnd = new TZDateMini(event.endUtc, timezone);
   const eventStartDate = dateFormat(eventStart);
@@ -48,13 +48,13 @@ function getSegmentForDate(event: MockEvent, targetDate: string, timezone: strin
   return eventSegment;
 }
 
-export function getDailyEventSegments(events: MockEvent[], selectedDate: string, timezone: string) {
+export function getDailyEventSegments(events: Event[], selectedDate: string, timezone: string) {
   return events
     .map((event) => getSegmentForDate(event, selectedDate, timezone))
     .filter((e) => e !== null);
 }
 
-export function getWeeklyEventSegments(events: MockEvent[], weekDays: Date[], timezone: string) {
+export function getWeeklyEventSegments(events: Event[], weekDays: Date[], timezone: string) {
   const weeklyEvents = weekDays.flatMap((wd) =>
     getDailyEventSegments(events, dateFormat(wd), timezone)
   );

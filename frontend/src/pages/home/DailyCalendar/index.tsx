@@ -1,6 +1,7 @@
 import { TZDateMini } from '@date-fns/tz';
 import { Box, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
+import { useEvents } from '../../../hooks/api';
 import { useCalendarStore } from '../../../stores/calendarStore';
 import { dateFormat } from '../../../utils/date';
 import { getDailyEventSegments } from '../utils';
@@ -13,11 +14,13 @@ const MIN_GRID_WIDTH = 72 + MIN_EVENTS_COL_WIDTH;
 
 export function DailyCalendar() {
   const { selectedDate, selectedTimezone } = useCalendarStore();
+  const { data } = useEvents();
 
   const now = TZDateMini.tz(selectedTimezone);
   const currentHour = now.getHours();
   const isToday = dateFormat(now) === selectedDate;
-  const { events } = useCalendarStore();
+
+  const events = data ?? [];
   const dayEvents = getDailyEventSegments(events, selectedDate, selectedTimezone);
 
   return (
@@ -76,7 +79,7 @@ export function DailyCalendar() {
                 gridRow: `hour-${event.hourStart} / hour-${event.hourEnd}`,
               }}
             >
-              <EventCell {...event} />
+              <EventCell {...event} events={events} />
             </Box>
           ))}
         </Box>
