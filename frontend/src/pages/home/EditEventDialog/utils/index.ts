@@ -23,6 +23,16 @@ export function useEditEventForm(values: EditEventFormValues) {
   });
 }
 
+/**
+ * Converts an event's UTC times to the user's timezone and extracts edit form values.
+ * MUI date/time controls handle dates in local timezone, and the date-fns adapter is not fully supported.
+ * (see https://mui.com/x/react-date-pickers/timezone)
+ * This function converts the event datetime to local "wall clock" time, according to timezone information.
+ *
+ * @param event - The event object containing title, startUtc, and endUtc properties
+ * @param timezone - The IANA timezone string (e.g., 'America/New_York') to convert UTC times to
+ * @returns {EditEventFormValues} an object which can be edited in edit event form
+ */
 export function getEditEventValuesFromEvent(event: Event, timezone: string) {
   const eventStartInTimezone = TZDate.tz(timezone, event.startUtc);
   const eventEndInTimezone = TZDate.tz(timezone, event.endUtc);
@@ -44,6 +54,7 @@ export function getEditEventValuesFromEvent(event: Event, timezone: string) {
  * Converts local date and time segments to a UTC ISO string.
  *
  * MUI date/time controls handle dates in local timezone, and the date-fns adapter is not fully supported.
+ * (see https://mui.com/x/react-date-pickers/timezone)
  * This function converts the local datetime to its corresponding UTC value through the following steps:
  * 1. Gets the local "wall clock" time for each segment
  * 2. Sets it to the specified timezone datetime (treating user-selected values as set in that timezone)
@@ -62,13 +73,6 @@ export function getEditEventValuesFromEvent(event: Event, timezone: string) {
  * const result = convertLocalToUtcDate(dateSegment, timeSegment, 'America/New_York'); // "2024-01-15T19:30:00.000Z"
  */
 export function convertLocalToUtcDate(dateSegment: Date, timeSegment: Date, timezone: string) {
-  // MUI date/time controls handle dates in local timezone -> date-fns adapter is not fully supported (https://mui.com/x/react-date-pickers/timezone)
-  // local datetime is calculated to corresponding UTC:
-  //  1. get local "wall clock" time for each segment
-  //  2. set it to TZ datetime
-  //     (this treats the user-selected values as set in timezone)
-  //  3. convert to corresponding UTC value
-
   const tzDateTime = TZDate.tz(timezone);
 
   tzDateTime.setFullYear(dateSegment.getFullYear(), dateSegment.getMonth(), dateSegment.getDate());
