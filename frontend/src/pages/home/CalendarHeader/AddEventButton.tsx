@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useToast } from '../../../components/Toast';
 import { useCreateEvent } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
-import { EditEventDialog } from '../EditEventDialog';
+import { EditEventDialog } from '../EditEventDialog/EditEventDialog';
 import { getEditEventBaseValues } from '../EditEventDialog/utils';
 
 export const AddEventButton = () => {

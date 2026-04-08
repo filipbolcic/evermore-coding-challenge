@@ -20,7 +20,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <ToastContext.Provider
+    <ToastContext
       value={{
         showToast,
         showSuccessToast: (m) => showToast(m, 'success'),
@@ -34,7 +34,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
         variant={variant}
         onClose={() => setMessage('')}
       />
-    </ToastContext.Provider>
+    </ToastContext>
   );
 };
 

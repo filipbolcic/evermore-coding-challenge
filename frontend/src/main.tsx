@@ -1,11 +1,11 @@
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { ToastProvider } from './components/Toast';
-import { routeTree } from './routeTree.gen';
 import { queryClient } from './lib/query-client';
+import { routeTree } from './routeTree.gen';
 
 const router = createRouter({ routeTree });
 
