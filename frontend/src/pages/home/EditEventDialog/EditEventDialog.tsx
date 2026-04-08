@@ -17,8 +17,7 @@ import { Controller } from 'react-hook-form';
 import type { UpdateEventValues } from '../../../api/events/types';
 import { ConfirmDialog } from '../../../components/ConfirmDialog';
 import { TimezoneSelect } from '../../../components/TimezoneSelect';
-import { UTC_TIMEZONE } from '../../../utils/date';
-import { getTzDate, useEditEventForm, type EditEventFormValues } from './utils';
+import { convertLocalToUtcDate, useEditEventForm, type EditEventFormValues } from './utils';
 
 interface Props {
   isOpen: boolean;
@@ -40,7 +39,6 @@ export function EditEventDialog({
   isSubmitting = false,
 }: Props) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const isBusy = isSubmitting;
 
   const {
     control,
@@ -48,21 +46,11 @@ export function EditEventDialog({
     formState: { errors },
   } = useEditEventForm(values);
 
-  function handleFormSubmit({
-    startDate,
-    startTime,
-    endDate,
-    endTime,
-    title,
-    timezone,
-  }: EditEventFormValues) {
-    const tzStartDateTime = getTzDate(timezone, startDate, startTime);
-    const tzEndDateTime = getTzDate(timezone, endDate, endTime);
+  function handleFormSubmit(values: EditEventFormValues) {
+    const startUtc = convertLocalToUtcDate(values.startDate, values.startTime, values.timezone);
+    const endUtc = convertLocalToUtcDate(values.endDate, values.endTime, values.timezone);
 
-    const startUtc = tzStartDateTime.withTimeZone(UTC_TIMEZONE);
-    const endUtc = tzEndDateTime.withTimeZone(UTC_TIMEZONE);
-
-    onSubmit({ title, startUtc: startUtc.toISOString(), endUtc: endUtc.toISOString() });
+    onSubmit({ title: values.title, startUtc, endUtc });
   }
 
   return (
@@ -70,13 +58,13 @@ export function EditEventDialog({
       <Dialog
         open={isOpen}
         onClose={(_, reason) => {
-          if (isBusy && (reason === 'backdropClick' || reason === 'escapeKeyDown')) {
+          if (isSubmitting && (reason === 'backdropClick' || reason === 'escapeKeyDown')) {
             return;
           }
 
           onClose();
         }}
-        disableEscapeKeyDown={isBusy}
+        disableEscapeKeyDown={isSubmitting}
         fullWidth
         maxWidth="sm"
       >
@@ -94,7 +82,7 @@ export function EditEventDialog({
                     size="small"
                     fullWidth
                     required
-                    disabled={isBusy}
+                    disabled={isSubmitting}
                     error={Boolean(errors.title)}
                     helperText={errors.title?.message}
                   />
@@ -109,13 +97,13 @@ export function EditEventDialog({
                     <DatePicker
                       {...field}
                       label="Start date"
-                      disabled={isBusy}
+                      disabled={isSubmitting}
                       slotProps={{
                         textField: {
                           size: 'small',
                           fullWidth: true,
                           required: true,
-                          disabled: isBusy,
+                          disabled: isSubmitting,
                           error: Boolean(errors.startDate),
                           helperText: errors.startDate?.message,
                         },
@@ -130,13 +118,13 @@ export function EditEventDialog({
                     <TimePicker
                       {...field}
                       label="Start time"
-                      disabled={isBusy}
+                      disabled={isSubmitting}
                       slotProps={{
                         textField: {
                           size: 'small',
                           fullWidth: true,
                           required: true,
-                          disabled: isBusy,
+                          disabled: isSubmitting,
                           error: Boolean(errors.startTime),
                           helperText: errors.startTime?.message,
                         },
@@ -154,13 +142,13 @@ export function EditEventDialog({
                     <DatePicker
                       {...field}
                       label="End date"
-                      disabled={isBusy}
+                      disabled={isSubmitting}
                       slotProps={{
                         textField: {
                           size: 'small',
                           fullWidth: true,
                           required: true,
-                          disabled: isBusy,
+                          disabled: isSubmitting,
                           error: Boolean(errors.endDate),
                           helperText: errors.endDate?.message,
                         },
@@ -175,13 +163,13 @@ export function EditEventDialog({
                     <TimePicker
                       {...field}
                       label="End time"
-                      disabled={isBusy}
+                      disabled={isSubmitting}
                       slotProps={{
                         textField: {
                           size: 'small',
                           fullWidth: true,
                           required: true,
-                          disabled: isBusy,
+                          disabled: isSubmitting,
                           error: Boolean(errors.endTime),
                           helperText: errors.endTime?.message,
                         },
@@ -201,7 +189,7 @@ export function EditEventDialog({
                       onSelectTimezone={field.onChange}
                       onBlur={field.onBlur}
                       required
-                      disabled={isBusy}
+                      disabled={isSubmitting}
                       error={Boolean(errors.timezone)}
                       helperText={errors.timezone?.message}
                     />
@@ -217,20 +205,22 @@ export function EditEventDialog({
                 onClick={() => setIsDeleteDialogOpen(true)}
                 type="button"
                 sx={{ mr: 'auto' }}
-                disabled={isBusy}
+                disabled={isSubmitting}
               >
                 Delete
               </Button>
             )}
-            <Button onClick={onClose} type="button" disabled={isBusy}>
+            <Button onClick={onClose} type="button" disabled={isSubmitting}>
               Cancel
             </Button>
             <Button
               variant="contained"
               type="submit"
-              disabled={isBusy}
+              disabled={isSubmitting}
               startIcon={
-                isBusy ? <CircularProgress color="inherit" size={16} thickness={5} /> : undefined
+                isSubmitting ? (
+                  <CircularProgress color="inherit" size={16} thickness={5} />
+                ) : undefined
               }
             >
               Save

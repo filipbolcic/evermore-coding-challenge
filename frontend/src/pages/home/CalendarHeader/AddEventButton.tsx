@@ -1,11 +1,10 @@
 import { Button } from '@mui/material';
-import { roundToNearestHours } from 'date-fns';
+import { addHours, roundToNearestHours } from 'date-fns';
 import { useState } from 'react';
 import { useToast } from '../../../components/Toast';
 import { useCreateEvent } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
 import { EditEventDialog } from '../EditEventDialog/EditEventDialog';
-import { getEditEventBaseValues } from '../EditEventDialog/utils';
 
 export const AddEventButton = () => {
   const { selectedTimezone } = useCalendarStore();
@@ -33,9 +32,23 @@ export const AddEventButton = () => {
               onError: () => showErrorToast(`Error while creating event`),
             })
           }
-          values={getEditEventBaseValues(roundToNearestHours(new Date()), selectedTimezone)}
+          values={getEditEventBaseValues(selectedTimezone)}
         />
       )}
     </>
   );
 };
+
+function getEditEventBaseValues(timezone: string) {
+  const startDate = roundToNearestHours(new Date());
+  const endDate = addHours(startDate, 1);
+
+  return {
+    title: '',
+    startDate,
+    startTime: startDate,
+    endDate,
+    endTime: endDate,
+    timezone,
+  };
+}

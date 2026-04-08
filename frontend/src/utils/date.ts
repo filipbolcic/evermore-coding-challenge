@@ -14,14 +14,14 @@ export function getBrowserTimezone(): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 
-export function getLocalWallClockDate(date: Date) {
+export function getLocalWallClockDate(dateSegment: Date, timeSegment = dateSegment) {
   return new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    date.getHours(),
-    date.getMinutes(),
-    date.getSeconds(),
-    date.getMilliseconds()
+    dateSegment.getFullYear(),
+    dateSegment.getMonth(),
+    dateSegment.getDate(),
+    timeSegment.getHours(),
+    timeSegment.getMinutes(),
+    timeSegment.getSeconds(),
+    timeSegment.getMilliseconds()
   );
 }
