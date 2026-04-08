@@ -46,13 +46,13 @@ npx prisma studio
 
 ### Seeding Data
 
-To populate the database with a few sample events:
+To populate the database with a fresh sample set of events:
 
 ```bash
 npm run db:seed
 ```
 
-This seed script clears the existing `events` table and inserts a fresh sample set.
+This seed script clears the existing `events` table and inserts events anchored around the moment the seed runs, so they stay close to the current calendar date during local development. The sample set includes daytime events, minute-offset events, back-to-back boundaries, midnight-crossing events, and a multi-day event.
 
 ## 📡 API Endpoints
 
