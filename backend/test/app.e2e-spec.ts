@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from './../src/app.module';
 import { EventsService } from './../src/events/events.service';
@@ -35,6 +35,12 @@ describe('EventsController (e2e)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+      }),
+    );
     await app.init();
   });
 
@@ -76,5 +82,16 @@ describe('EventsController (e2e)', () => {
 
   it('/events/:id (DELETE)', () => {
     return request(app.getHttpServer()).delete('/events/event-1').expect(204);
+  });
+
+  it('/events (POST) rejects datetimes without timezone information', () => {
+    return request(app.getHttpServer())
+      .post('/events')
+      .send({
+        title: 'Client Call',
+        startUtc: '2026-04-01T09:00:00.000',
+        endUtc: '2026-04-01T10:00:00.000',
+      })
+      .expect(400);
   });
 });

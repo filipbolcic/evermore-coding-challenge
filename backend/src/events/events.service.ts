@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { parseEventDateTime } from './date-time.util';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 
@@ -24,8 +25,8 @@ export class EventsService {
   }
 
   async create(createEventDto: CreateEventDto) {
-    const startUtc = new Date(createEventDto.startUtc);
-    const endUtc = new Date(createEventDto.endUtc);
+    const startUtc = parseEventDateTime(createEventDto.startUtc, 'startUtc');
+    const endUtc = parseEventDateTime(createEventDto.endUtc, 'endUtc');
 
     this.validateTimeRange(startUtc, endUtc);
 
@@ -54,8 +55,12 @@ export class EventsService {
       throw new NotFoundException(`Event ${id} not found`);
     }
 
-    const startUtc = updateEventDto.startUtc ? new Date(updateEventDto.startUtc) : existingEvent.startUtc;
-    const endUtc = updateEventDto.endUtc ? new Date(updateEventDto.endUtc) : existingEvent.endUtc;
+    const startUtc = updateEventDto.startUtc
+      ? parseEventDateTime(updateEventDto.startUtc, 'startUtc')
+      : existingEvent.startUtc;
+    const endUtc = updateEventDto.endUtc
+      ? parseEventDateTime(updateEventDto.endUtc, 'endUtc')
+      : existingEvent.endUtc;
 
     this.validateTimeRange(startUtc, endUtc);
 
