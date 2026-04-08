@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { alpha, Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import type { Event } from '../../../api/events/types';
 import { useToast } from '../../../components/Toast';
@@ -34,13 +34,34 @@ export const EventCell = ({ id, title, startTime, endTime, events }: Props) => {
           backgroundColor: 'info.light',
           color: 'info.contrastText',
           borderRadius: 1,
-          boxShadow: 1,
+          border: '1px solid',
+          borderColor: (theme) => alpha(theme.palette.common.white, 0.3),
+          boxShadow: (theme) =>
+            `0 2px 6px ${alpha(theme.palette.info.dark, 0.16)}, inset 0 0 0 1px ${alpha(
+              theme.palette.common.white,
+              0.08
+            )}`,
           zIndex: 1,
           display: 'flex',
           flexDirection: 'column',
           gap: 0.5,
+          overflow: 'hidden',
           cursor: 'pointer',
-          ':hover': { zIndex: 10, boxShadow: 3 },
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            inset: 0,
+            borderTop: (theme) => `2px solid ${alpha(theme.palette.common.white, 0.28)}`,
+            pointerEvents: 'none',
+          },
+          ':hover': {
+            zIndex: 10,
+            boxShadow: (theme) =>
+              `0 6px 14px ${alpha(theme.palette.info.dark, 0.2)}, inset 0 0 0 1px ${alpha(
+                theme.palette.common.white,
+                0.12
+              )}`,
+          },
         }}
         onClick={() => setIsDialogOpen(true)}
         role="button"
