@@ -10,8 +10,8 @@ datasource db {
 model Event {
   id       String   @id @default(uuid())
   title    String
-  startUtc DateTime @map("start_time") @db.Timestamptz(3)
-  endUtc   DateTime @map("end_time") @db.Timestamptz(3)
+  startUtc DateTime @map("start_time") @db.Timestamptz(0)
+  endUtc   DateTime @map("end_time") @db.Timestamptz(0)
 
   @@map("events")
 }
