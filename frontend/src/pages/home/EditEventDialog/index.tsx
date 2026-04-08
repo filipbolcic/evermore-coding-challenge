@@ -77,6 +77,7 @@ export function EditEventDialog({
                     label="Title"
                     size="small"
                     fullWidth
+                    required
                     error={Boolean(errors.title)}
                     helperText={errors.title?.message}
                   />
@@ -95,6 +96,7 @@ export function EditEventDialog({
                         textField: {
                           size: 'small',
                           fullWidth: true,
+                          required: true,
                           error: Boolean(errors.startDate),
                           helperText: errors.startDate?.message,
                         },
@@ -113,6 +115,7 @@ export function EditEventDialog({
                         textField: {
                           size: 'small',
                           fullWidth: true,
+                          required: true,
                           error: Boolean(errors.startTime),
                           helperText: errors.startTime?.message,
                         },
@@ -134,6 +137,7 @@ export function EditEventDialog({
                         textField: {
                           size: 'small',
                           fullWidth: true,
+                          required: true,
                           error: Boolean(errors.endDate),
                           helperText: errors.endDate?.message,
                         },
@@ -152,6 +156,7 @@ export function EditEventDialog({
                         textField: {
                           size: 'small',
                           fullWidth: true,
+                          required: true,
                           error: Boolean(errors.endTime),
                           helperText: errors.endTime?.message,
                         },
@@ -166,7 +171,14 @@ export function EditEventDialog({
                 control={control}
                 render={({ field }) => (
                   <Stack sx={{ width: '100%', '& .MuiAutocomplete-root': { width: '100%' } }}>
-                    <TimezoneSelect timezone={field.value} onSelectTimezone={field.onChange} />
+                    <TimezoneSelect
+                      timezone={field.value}
+                      onSelectTimezone={field.onChange}
+                      onBlur={field.onBlur}
+                      required
+                      error={Boolean(errors.timezone)}
+                      helperText={errors.timezone?.message}
+                    />
                   </Stack>
                 )}
               />
