@@ -1,11 +1,27 @@
+import { UTCDate } from '@date-fns/utc';
 import { BadRequestException } from '@nestjs/common';
+import { isValid, parseISO } from 'date-fns';
+import { UTC_ISO_DATETIME_REGEX } from './dto/date-time.constants';
 
-export function parseEventDateTime(input: string, fieldName: 'startUtc' | 'endUtc') {
-  const parsedDate = new Date(input);
+type EventDateField = 'startUtc' | 'endUtc';
 
-  if (Number.isNaN(parsedDate.getTime())) {
-    throw new BadRequestException(`${fieldName} must be a valid datetime`);
+export function parseEventDateTime(input: string, fieldName: EventDateField) {
+  if (!UTC_ISO_DATETIME_REGEX.test(input)) {
+    throw new BadRequestException(`${fieldName} must be a valid UTC datetime`);
   }
 
-  return parsedDate;
+  const parsedDate = parseISO(input);
+  if (!isValid(parsedDate)) {
+    throw new BadRequestException(`${fieldName} must be a valid UTC datetime`);
+  }
+
+  return new UTCDate(parsedDate.getTime());
+}
+
+export function toUtcDate(input: Date) {
+  if (Number.isNaN(input.getTime())) {
+    throw new BadRequestException('Encountered an invalid persisted datetime');
+  }
+
+  return new UTCDate(input.getTime());
 }

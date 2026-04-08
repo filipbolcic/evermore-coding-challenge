@@ -1,7 +1,13 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { UTCDate } from '@date-fns/utc';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { isAfter } from 'date-fns';
 import { PrismaService } from '../prisma/prisma.service';
-import { parseEventDateTime } from './date-time.util';
+import { parseEventDateTime, toUtcDate } from './date-time.util';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 
@@ -55,12 +61,15 @@ export class EventsService {
       throw new NotFoundException(`Event ${id} not found`);
     }
 
+    const existingStartUtc = toUtcDate(existingEvent.startUtc);
+    const existingEndUtc = toUtcDate(existingEvent.endUtc);
+
     const startUtc = updateEventDto.startUtc
       ? parseEventDateTime(updateEventDto.startUtc, 'startUtc')
-      : existingEvent.startUtc;
+      : existingStartUtc;
     const endUtc = updateEventDto.endUtc
       ? parseEventDateTime(updateEventDto.endUtc, 'endUtc')
-      : existingEvent.endUtc;
+      : existingEndUtc;
 
     this.validateTimeRange(startUtc, endUtc);
 
@@ -98,8 +107,8 @@ export class EventsService {
     }
   }
 
-  private validateTimeRange(startUtc: Date, endUtc: Date) {
-    if (endUtc <= startUtc) {
+  private validateTimeRange(startUtc: UTCDate, endUtc: UTCDate) {
+    if (isAfter(startUtc, endUtc)) {
       throw new BadRequestException('endUtc must be after startUtc');
     }
   }

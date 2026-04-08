@@ -1,4 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
+import { UTCDate } from '@date-fns/utc';
 import { Prisma } from '@prisma/client';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../prisma/prisma.service';
@@ -99,42 +100,24 @@ describe('EventsService', () => {
       });
     });
 
-    it('normalizes offset-aware input datetimes to UTC before persisting', async () => {
-      prismaService.event.create.mockResolvedValue({
-        id: 'event-1',
-        title: 'Client Call',
-        startUtc: new Date('2026-04-01T09:00:00.000Z'),
-        endUtc: new Date('2026-04-01T10:30:00.000Z'),
-      });
-
-      await expect(
-        eventsService.create({
-          title: 'Client Call',
-          startUtc: '2026-04-01T11:00:00.000+02:00',
-          endUtc: '2026-04-01T12:30:00.000+02:00',
-        }),
-      ).resolves.toEqual({
-        id: 'event-1',
-        title: 'Client Call',
-        startUtc: '2026-04-01T09:00:00.000Z',
-        endUtc: '2026-04-01T10:30:00.000Z',
-      });
-
-      expect(prismaService.event.create).toHaveBeenCalledWith({
-        data: {
-          title: 'Client Call',
-          startUtc: new Date('2026-04-01T09:00:00.000Z'),
-          endUtc: new Date('2026-04-01T10:30:00.000Z'),
-        },
-      });
-    });
-
     it('rejects events whose end time is before or equal to the start time', async () => {
       await expect(
         eventsService.create({
           title: 'Broken Event',
           startUtc: '2026-04-01T10:00:00.000Z',
           endUtc: '2026-04-01T10:00:00.000Z',
+        }),
+      ).rejects.toThrow(BadRequestException);
+
+      expect(prismaService.event.create).not.toHaveBeenCalled();
+    });
+
+    it('rejects datetimes that are not explicitly UTC', async () => {
+      await expect(
+        eventsService.create({
+          title: 'Broken Event',
+          startUtc: '2026-04-01T11:00:00.000+02:00',
+          endUtc: '2026-04-01T12:00:00.000+02:00',
         }),
       ).rejects.toThrow(BadRequestException);
 
@@ -151,6 +134,27 @@ describe('EventsService', () => {
       ).rejects.toThrow(BadRequestException);
 
       expect(prismaService.event.create).not.toHaveBeenCalled();
+    });
+
+    it('persists UTCDate instances after parsing', async () => {
+      prismaService.event.create.mockResolvedValue({
+        id: 'event-1',
+        title: 'Client Call',
+        startUtc: new Date('2026-04-01T09:00:00.000Z'),
+        endUtc: new Date('2026-04-01T10:00:00.000Z'),
+      });
+
+      await eventsService.create({
+        title: 'Client Call',
+        startUtc: '2026-04-01T09:00:00.000Z',
+        endUtc: '2026-04-01T10:00:00.000Z',
+      });
+
+      const createArgs = prismaService.event.create.mock.calls[0][0];
+      expect(createArgs.data.startUtc).toBeInstanceOf(UTCDate);
+      expect(createArgs.data.endUtc).toBeInstanceOf(UTCDate);
+      expect(createArgs.data.startUtc.toISOString()).toBe('2026-04-01T09:00:00.000Z');
+      expect(createArgs.data.endUtc.toISOString()).toBe('2026-04-01T10:00:00.000Z');
     });
   });
 
@@ -207,7 +211,24 @@ describe('EventsService', () => {
       expect(prismaService.event.update).not.toHaveBeenCalled();
     });
 
-    it('normalizes updated offset-aware datetimes to UTC before persisting', async () => {
+    it('rejects updated datetimes that are not explicitly UTC', async () => {
+      prismaService.event.findUnique.mockResolvedValue({
+        id: 'event-1',
+        title: 'Client Call',
+        startUtc: new Date('2026-04-01T09:00:00.000Z'),
+        endUtc: new Date('2026-04-01T10:00:00.000Z'),
+      });
+      await expect(
+        eventsService.update('event-1', {
+          startUtc: '2026-04-01T08:00:00.000-04:00',
+          endUtc: '2026-04-01T09:00:00.000-04:00',
+        }),
+      ).rejects.toThrow(BadRequestException);
+
+      expect(prismaService.event.update).not.toHaveBeenCalled();
+    });
+
+    it('uses UTCDate instances for persisted and updated datetimes during validation', async () => {
       prismaService.event.findUnique.mockResolvedValue({
         id: 'event-1',
         title: 'Client Call',
@@ -217,30 +238,19 @@ describe('EventsService', () => {
       prismaService.event.update.mockResolvedValue({
         id: 'event-1',
         title: 'Client Call',
-        startUtc: new Date('2026-04-01T12:00:00.000Z'),
-        endUtc: new Date('2026-04-01T13:00:00.000Z'),
+        startUtc: new Date('2026-04-01T09:30:00.000Z'),
+        endUtc: new Date('2026-04-01T10:00:00.000Z'),
       });
 
-      await expect(
-        eventsService.update('event-1', {
-          startUtc: '2026-04-01T08:00:00.000-04:00',
-          endUtc: '2026-04-01T09:00:00.000-04:00',
-        }),
-      ).resolves.toEqual({
-        id: 'event-1',
-        title: 'Client Call',
-        startUtc: '2026-04-01T12:00:00.000Z',
-        endUtc: '2026-04-01T13:00:00.000Z',
+      await eventsService.update('event-1', {
+        startUtc: '2026-04-01T09:30:00.000Z',
       });
 
-      expect(prismaService.event.update).toHaveBeenCalledWith({
-        where: { id: 'event-1' },
-        data: {
-          title: undefined,
-          startUtc: new Date('2026-04-01T12:00:00.000Z'),
-          endUtc: new Date('2026-04-01T13:00:00.000Z'),
-        },
-      });
+      const updateArgs = prismaService.event.update.mock.calls[0][0];
+      expect(updateArgs.data.startUtc).toBeInstanceOf(UTCDate);
+      expect(updateArgs.data.endUtc).toBeInstanceOf(UTCDate);
+      expect(updateArgs.data.startUtc.toISOString()).toBe('2026-04-01T09:30:00.000Z');
+      expect(updateArgs.data.endUtc.toISOString()).toBe('2026-04-01T10:00:00.000Z');
     });
   });
 

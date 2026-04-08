@@ -94,4 +94,15 @@ describe('EventsController (e2e)', () => {
       })
       .expect(400);
   });
+
+  it('/events (POST) rejects datetimes with non-UTC offsets', () => {
+    return request(app.getHttpServer())
+      .post('/events')
+      .send({
+        title: 'Client Call',
+        startUtc: '2026-04-01T11:00:00.000+02:00',
+        endUtc: '2026-04-01T12:00:00.000+02:00',
+      })
+      .expect(400);
+  });
 });

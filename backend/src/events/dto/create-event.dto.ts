@@ -1,7 +1,7 @@
 import { IsDateString, IsString, Matches, MinLength } from 'class-validator';
 import {
-  TIMEZONE_AWARE_ISO_DATETIME_MESSAGE,
-  TIMEZONE_AWARE_ISO_DATETIME_REGEX,
+  UTC_ISO_DATETIME_MESSAGE,
+  UTC_ISO_DATETIME_REGEX,
 } from './date-time.constants';
 
 export class CreateEventDto {
@@ -10,14 +10,14 @@ export class CreateEventDto {
   title!: string;
 
   @IsDateString()
-  @Matches(TIMEZONE_AWARE_ISO_DATETIME_REGEX, {
-    message: `startUtc ${TIMEZONE_AWARE_ISO_DATETIME_MESSAGE}`,
+  @Matches(UTC_ISO_DATETIME_REGEX, {
+    message: `startUtc ${UTC_ISO_DATETIME_MESSAGE}`,
   })
   startUtc!: string;
 
   @IsDateString()
-  @Matches(TIMEZONE_AWARE_ISO_DATETIME_REGEX, {
-    message: `endUtc ${TIMEZONE_AWARE_ISO_DATETIME_MESSAGE}`,
+  @Matches(UTC_ISO_DATETIME_REGEX, {
+    message: `endUtc ${UTC_ISO_DATETIME_MESSAGE}`,
   })
   endUtc!: string;
 }
