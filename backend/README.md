@@ -58,6 +58,17 @@ This seed script clears the existing `events` table and inserts events anchored 
 
 The server runs on **http://localhost:3000** by default.
 
+### Development Network Simulation
+
+You can simulate slower and less reliable API responses in local development with these environment variables:
+
+```env
+DEV_NETWORK_SIMULATION_DELAY_MS=1200
+DEV_NETWORK_SIMULATION_ERROR_FRACTION=0.25
+```
+
+Set each env to 0 to disable the middleware. `DEV_NETWORK_SIMULATION_DELAY_MS=1200` will introduce a response delay of 1200ms. With `DEV_NETWORK_SIMULATION_ERROR_FRACTION=0.25`, roughly 25% of requests will return the configured error payload instead of reaching the controller.
+
 ### Swagger / OpenAPI
 
 (Optional) If you have enabled Swagger in `main.ts`, documentation is available at:
