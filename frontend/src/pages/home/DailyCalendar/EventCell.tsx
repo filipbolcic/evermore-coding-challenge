@@ -16,7 +16,7 @@ export const EventCell = ({ id, title, startTime, endTime, events }: Props) => {
 
   const { mutate: deleteEvent } = useDeleteEvent();
   const { mutate: updateEvent } = useUpdateEvent();
-  const { showToast, toast } = useToast();
+  const { showSuccessToast, showErrorToast } = useToast();
 
   const sourceEvent = events.find((event) => event.id === id)!;
   const values = getEditEventValuesFromEvent(sourceEvent, selectedTimezone);
@@ -70,26 +70,24 @@ export const EventCell = ({ id, title, startTime, endTime, events }: Props) => {
               { id, ...e },
               {
                 onSuccess: () => {
-                  showToast(`Event successfully updated.`, 'success');
+                  showSuccessToast(`Event successfully updated.`);
                   setIsDialogOpen(false);
                 },
-                onError: () => showToast(`Error while updating event`, 'error'),
+                onError: () => showErrorToast(`Error while updating event`),
               }
             )
           }
           onDelete={() =>
             deleteEvent(id, {
               onSuccess: () => {
-                showToast(`Event successfully deleted.`, 'success');
+                showSuccessToast(`Event successfully deleted.`);
                 setIsDialogOpen(false);
               },
-              onError: () => showToast(`Error while deleting event`, 'error'),
+              onError: () => showErrorToast(`Error while deleting event`),
             })
           }
         />
       )}
-
-      {toast}
     </>
   );
 };

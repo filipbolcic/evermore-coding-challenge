@@ -19,7 +19,7 @@ export function EventCard({ event }: Props) {
 
   const { mutate: updateEvent } = useUpdateEvent();
   const { mutate: deleteEvent } = useDeleteEvent();
-  const { showToast, toast } = useToast();
+  const { showSuccessToast, showErrorToast } = useToast();
 
   const values = getEditEventValuesFromEvent(event, selectedTimezone);
   const startTime = timeFormat(new TZDateMini(event.startUtc, selectedTimezone));
@@ -69,25 +69,24 @@ export function EventCard({ event }: Props) {
               { id: event.id, ...e },
               {
                 onSuccess: () => {
-                  showToast(`Event successfully updated.`, 'success');
+                  showSuccessToast(`Event successfully updated.`);
                   setIsDialogOpen(false);
                 },
-                onError: () => showToast(`Error while updating event`, 'error'),
+                onError: () => showErrorToast(`Error while updating event`),
               }
             )
           }
           onDelete={() =>
             deleteEvent(event.id, {
               onSuccess: () => {
-                showToast(`Event successfully deleted.`, 'success');
+                showSuccessToast(`Event successfully deleted.`);
                 setIsDialogOpen(false);
               },
-              onError: () => showToast(`Error while deleting event`, 'error'),
+              onError: () => showErrorToast(`Error while deleting event`),
             })
           }
         />
       )}
-      {toast}
     </>
   );
 }

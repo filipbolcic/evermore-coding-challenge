@@ -27,7 +27,7 @@ export function CalendarHeader() {
   } = useCalendarStore();
 
   const { mutate: createEvent } = useCreateEvent();
-  const { showToast, toast } = useToast();
+  const { showSuccessToast, showErrorToast } = useToast();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -112,17 +112,15 @@ export function CalendarHeader() {
           onSubmit={(e) =>
             createEvent(e, {
               onSuccess: () => {
-                showToast(`Successfully created event ${e.title}.`, 'success');
+                showSuccessToast(`Successfully created event ${e.title}.`);
                 setIsDialogOpen(false);
               },
-              onError: () => showToast(`Error while creating event`, 'error'),
+              onError: () => showErrorToast(`Error while creating event`),
             })
           }
           values={getEditEventBaseValues(roundToNearestHours(new Date()), selectedTimezone)}
         />
       )}
-
-      {toast}
     </>
   );
 }
