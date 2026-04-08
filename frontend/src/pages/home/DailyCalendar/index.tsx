@@ -24,17 +24,15 @@ export function DailyCalendar() {
   const dayEvents = getDailyEventSegments(events, selectedDate, selectedTimezone);
 
   return (
-    <Stack spacing={0}>
-      <Box sx={{ p: 2, backgroundColor: 'background.default' }}>
-        <Typography sx={{ fontSize: { xs: '1.6rem', sm: '1.9rem' }, fontWeight: 500 }}>
-          {format(selectedDate, 'EEEE, MMMM d, yyyy')}
-          {isToday && (
-            <Typography component="span" sx={{ ml: 1, color: 'primary.main', fontWeight: 'bold' }}>
-              (Today)
-            </Typography>
-          )}
-        </Typography>
-      </Box>
+    <Stack gap={1}>
+      <Typography fontSize={['1.4rem', '1.9rem']} fontWeight={500}>
+        {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+        {isToday && (
+          <Typography component="span" sx={{ ml: 1, color: 'primary.main', fontWeight: 'bold' }}>
+            (Today)
+          </Typography>
+        )}
+      </Typography>
 
       <Box sx={{ width: '100%', overflowX: 'auto' }}>
         <Box

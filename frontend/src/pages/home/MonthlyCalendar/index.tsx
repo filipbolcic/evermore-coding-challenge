@@ -1,6 +1,6 @@
 import { tz } from '@date-fns/tz';
-import { Box, Typography } from '@mui/material';
-import { isSameMonth, isToday } from 'date-fns';
+import { Box, Stack, Typography } from '@mui/material';
+import { format, isSameMonth, isToday } from 'date-fns';
 import { useEvents } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
 import { dateFormat } from '../../../utils/date';
@@ -16,42 +16,47 @@ export function MonthlyCalendar() {
   const calendarDays = getMonthlyCalendarDays(selectedDate, selectedTimezone);
   const events = data ?? [];
   return (
-    <Box sx={{ overflowX: 'auto', width: '100%' }}>
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(7, minmax(${MIN_COL_WIDTH}px, 1fr))`,
-          gap: 1,
-          minWidth: MIN_CALENDAR_WIDTH,
-          width: `max(100%, ${MIN_CALENDAR_WIDTH}px)`,
-        }}
-      >
-        {WEEK_DAY_LABELS.map((day) => (
-          <Box key={day} sx={{ p: 1, textAlign: 'center' }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-              {day}
-            </Typography>
-          </Box>
-        ))}
+    <Stack gap={1}>
+      <Typography fontSize={['1.4rem', '1.9rem']} fontWeight={500}>
+        {format(selectedDate, 'MMMM yyyy')}
+      </Typography>
+      <Box sx={{ overflowX: 'auto', width: '100%' }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(7, minmax(${MIN_COL_WIDTH}px, 1fr))`,
+            gap: 1,
+            minWidth: MIN_CALENDAR_WIDTH,
+            width: `max(100%, ${MIN_CALENDAR_WIDTH}px)`,
+          }}
+        >
+          {WEEK_DAY_LABELS.map((day) => (
+            <Box key={day} sx={{ p: 1, textAlign: 'center' }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                {day}
+              </Typography>
+            </Box>
+          ))}
 
-        {calendarDays.map((day, index) => {
-          const dayEvents = getDailyEventSegments(events, dateFormat(day), selectedTimezone);
-          dayEvents.sort((a, b) => a.startUtc.localeCompare(b.startUtc));
+          {calendarDays.map((day, index) => {
+            const dayEvents = getDailyEventSegments(events, dateFormat(day), selectedTimezone);
+            dayEvents.sort((a, b) => a.startUtc.localeCompare(b.startUtc));
 
-          const isInCurrentMonth = isSameMonth(day, selectedDate);
-          const isCurrentDay = isToday(day, { in: tz(selectedTimezone) });
+            const isInCurrentMonth = isSameMonth(day, selectedDate);
+            const isCurrentDay = isToday(day, { in: tz(selectedTimezone) });
 
-          return (
-            <DayCell
-              key={index}
-              day={day}
-              events={dayEvents}
-              isInCurrentMonth={isInCurrentMonth}
-              isCurrentDay={isCurrentDay}
-            />
-          );
-        })}
+            return (
+              <DayCell
+                key={index}
+                day={day}
+                events={dayEvents}
+                isInCurrentMonth={isInCurrentMonth}
+                isCurrentDay={isCurrentDay}
+              />
+            );
+          })}
+        </Box>
       </Box>
-    </Box>
+    </Stack>
   );
 }

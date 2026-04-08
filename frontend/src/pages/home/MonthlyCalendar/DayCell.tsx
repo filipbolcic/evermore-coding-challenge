@@ -32,7 +32,7 @@ export function DayCell({ day, events, isInCurrentMonth, isCurrentDay }: DayCell
         {format(day, 'd')}
       </Typography>
 
-      <Stack spacing={0.25} sx={{ mt: 0.5, maxHeight: 120, overflowY: 'auto' }}>
+      <Stack gap={0.25} sx={{ mt: 0.5, maxHeight: 120, overflowY: 'auto' }}>
         {events.map((event) => (
           <EventCard key={event.id} {...event} />
         ))}

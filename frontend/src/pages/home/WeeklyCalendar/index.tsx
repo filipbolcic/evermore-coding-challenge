@@ -1,6 +1,6 @@
 import { TZDateMini } from '@date-fns/tz';
-import { Box, Stack } from '@mui/material';
-import { isSameDay } from 'date-fns';
+import { Box, Stack, Typography } from '@mui/material';
+import { format, isSameDay, isSameMonth } from 'date-fns';
 import { useEvents } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
 import { dateFormat } from '../../../utils/date';
@@ -25,8 +25,28 @@ export function WeeklyCalendar() {
   const events = data ?? [];
   const eventSegments = getWeeklyEventSegments(events, weekDays, selectedTimezone);
 
+  const formatWeekSpan = () => {
+    const weekStart = weekDays[0];
+    const weekEnd = weekDays.at(-1) as Date;
+
+    let weekStartFormat = 'MMMM do';
+    if (!isSameMonth(weekStart, weekEnd)) {
+      weekStartFormat += ' yyyy';
+    }
+
+    let weekEndFormat = 'do yyyy';
+    if (!isSameMonth(weekStart, weekEnd)) {
+      weekEndFormat = 'MMMM ' + weekEndFormat;
+    }
+
+    return `${format(weekStart, weekStartFormat)} - ${format(weekEnd, weekEndFormat)}`;
+  };
+
   return (
-    <Stack spacing={1}>
+    <Stack gap={1}>
+      <Typography fontSize={['1.4rem', '1.9rem']} fontWeight={500}>
+        {formatWeekSpan()}
+      </Typography>
       <Box sx={{ width: '100%', overflowX: 'auto' }}>
         <Box
           sx={{

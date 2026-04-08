@@ -11,7 +11,7 @@ export function HomePage() {
   const { isLoading } = useEvents();
 
   return (
-    <Stack spacing={2}>
+    <Stack gap={2}>
       <Typography variant="h4">Calendar</Typography>
       <CalendarHeader />
       <Box sx={{ position: 'relative', isolation: 'isolate' }}>

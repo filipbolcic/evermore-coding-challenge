@@ -83,7 +83,7 @@ export function EditEventDialog({
         <form onSubmit={handleSubmit(handleFormSubmit)}>
           <DialogTitle>{isEditMode ? 'Edit event' : 'Add event'}</DialogTitle>
           <DialogContent>
-            <Stack spacing={2} sx={{ mt: 1 }}>
+            <Stack gap={2} sx={{ mt: 1 }}>
               <Controller
                 name="title"
                 control={control}
@@ -101,7 +101,7 @@ export function EditEventDialog({
                 )}
               />
 
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
                 <Controller
                   name="startDate"
                   control={control}
@@ -146,7 +146,7 @@ export function EditEventDialog({
                 />
               </Stack>
 
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>
                 <Controller
                   name="endDate"
                   control={control}
