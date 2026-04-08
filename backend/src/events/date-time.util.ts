@@ -15,6 +15,8 @@ export function parseEventDateTime(input: string, fieldName: EventDateField) {
     throw new BadRequestException(`${fieldName} must be a valid UTC datetime`);
   }
 
+  parsedDate.setUTCSeconds(0, 0);
+
   return new UTCDate(parsedDate.getTime());
 }
 

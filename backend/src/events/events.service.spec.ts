@@ -159,6 +159,25 @@ describe('EventsService', () => {
       expect(createArgs.data.endUtc.toISOString()).toBe('2026-04-01T10:00:00.000Z');
     });
 
+    it('normalizes non-zero seconds in created event datetimes', async () => {
+      prismaService.event.create.mockResolvedValue({
+        id: 'event-1',
+        title: 'Client Call',
+        startUtc: new Date('2026-04-01T09:00:00.000Z'),
+        endUtc: new Date('2026-04-01T10:15:00.000Z'),
+      });
+
+      await eventsService.create({
+        title: 'Client Call',
+        startUtc: '2026-04-01T09:00:45.250Z',
+        endUtc: '2026-04-01T10:15:59.999Z',
+      });
+
+      const createArgs = prismaService.event.create.mock.calls[0][0];
+      expect(createArgs.data.startUtc.toISOString()).toBe('2026-04-01T09:00:00.000Z');
+      expect(createArgs.data.endUtc.toISOString()).toBe('2026-04-01T10:15:00.000Z');
+    });
+
     it('rejects invalid datetimes', async () => {
       await expect(
         eventsService.create({
@@ -338,6 +357,30 @@ describe('EventsService', () => {
       const updateArgs = prismaService.event.update.mock.calls[0][0];
       expect(updateArgs.data.startUtc.toISOString()).toBe('2026-04-01T09:30:00.000Z');
       expect(updateArgs.data.endUtc.toISOString()).toBe('2026-04-01T10:30:00.000Z');
+    });
+
+    it('normalizes non-zero seconds in updated event datetimes', async () => {
+      prismaService.event.findUnique.mockResolvedValue({
+        id: 'event-1',
+        title: 'Client Call',
+        startUtc: new Date('2026-04-01T09:00:00.000Z'),
+        endUtc: new Date('2026-04-01T10:00:00.000Z'),
+      });
+      prismaService.event.update.mockResolvedValue({
+        id: 'event-1',
+        title: 'Client Call',
+        startUtc: new Date('2026-04-01T09:30:00.000Z'),
+        endUtc: new Date('2026-04-01T10:45:00.000Z'),
+      });
+
+      await eventsService.update('event-1', {
+        startUtc: '2026-04-01T09:30:27.400Z',
+        endUtc: '2026-04-01T10:45:58.123Z',
+      });
+
+      const updateArgs = prismaService.event.update.mock.calls[0][0];
+      expect(updateArgs.data.startUtc.toISOString()).toBe('2026-04-01T09:30:00.000Z');
+      expect(updateArgs.data.endUtc.toISOString()).toBe('2026-04-01T10:45:00.000Z');
     });
 
     it('uses UTCDate instances for persisted and updated datetimes during validation', async () => {
