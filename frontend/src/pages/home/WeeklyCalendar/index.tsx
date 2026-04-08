@@ -7,7 +7,7 @@ import { dateFormat } from '../../../utils/date';
 import { EventCell } from '../DailyCalendar/EventCell';
 import { HourLabelCell } from '../DailyCalendar/HourLabelCell';
 import { getWeeklyEventSegments } from '../utils';
-import { HOUR_GRID_ROWS, HOUR_LIST } from '../utils/const';
+import { HOUR_GRID_ROWS, HOUR_LIST, HOUR_ROW_HEIGHT } from '../utils/const';
 import { DateLabelCell } from './DateLabelCell';
 import { getGridColumns, getWeekDays } from './utils';
 import { MIN_GRID_WIDTH } from './utils/const';
@@ -72,17 +72,41 @@ export function WeeklyCalendar() {
             />
           ))}
 
-          {eventSegments.map((event) => (
-            <Box
-              key={`event-${event.date}-${event.id}`}
-              sx={{
-                gridRow: `hour-${event.hourStart} / hour-${event.hourEnd}`,
-                gridColumn: `date-${event.date}`,
-              }}
-            >
-              <EventCell {...event} events={events} />
-            </Box>
-          ))}
+          {weekDays.map((day) => {
+            const dayKey = dateFormat(day);
+            const dayEvents = eventSegments.filter((event) => event.segmentDate === dayKey);
+
+            return (
+              <Box
+                key={`overlay-${dayKey}`}
+                sx={{
+                  gridColumn: `date-${dayKey}`,
+                  gridRow: 'hour-0 / hour-24',
+                  position: 'relative',
+                  pointerEvents: 'none',
+                }}
+              >
+                {dayEvents.map((event) => (
+                  <Box
+                    key={`event-${event.segmentDate}-${event.id}`}
+                    sx={{
+                      position: 'absolute',
+                      insetInline: 0,
+                      top: `${(event.segmentMinuteStart / 60) * HOUR_ROW_HEIGHT}px`,
+                      height: `${Math.max(
+                        ((event.segmentMinuteEnd - event.segmentMinuteStart) / 60) *
+                          HOUR_ROW_HEIGHT,
+                        24
+                      )}px`,
+                      pointerEvents: 'auto',
+                    }}
+                  >
+                    <EventCell {...event} />
+                  </Box>
+                ))}
+              </Box>
+            );
+          })}
         </Box>
       </Box>
     </Stack>

@@ -2,14 +2,12 @@ import { TZDateMini } from '@date-fns/tz';
 import type { Event } from '../../../api/events/types';
 import { dateFormat, timeFormat } from '../../../utils/date';
 
-export interface CalendarEventSegment {
-  id: string;
-  title: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  hourStart: number;
-  hourEnd: number;
+export interface CalendarEventSegment extends Event {
+  segmentDate: string;
+  segmentStartTimeFormatted: string;
+  segmentEndTimeFormatted: string;
+  segmentMinuteStart: number;
+  segmentMinuteEnd: number;
 }
 
 function getSegmentForDate(event: Event, targetDate: string, timezone: string) {
@@ -27,24 +25,24 @@ function getSegmentForDate(event: Event, targetDate: string, timezone: string) {
   const endsAfterDay = eventEndDate > targetDate;
 
   const startHour = startsBeforeDay ? 0 : eventStart.getHours();
+  const startMinute = startsBeforeDay ? 0 : eventStart.getMinutes();
   const endHour = endsAfterDay ? 24 : eventEnd.getHours();
   const endMinute = endsAfterDay ? 0 : eventEnd.getMinutes();
 
+  // prevent events ending on midnight to be carried over to the next day
+  // eg. endUtc: 2026-05-04T00:00:00 would otherwise be rendered on the 4ht of May
   const isMidnightEndingEvent = eventEndDate === targetDate && endHour === 0 && endMinute === 0;
   if (isMidnightEndingEvent) {
     return null;
   }
 
-  //todo add event start/end time -> they are needed in EventCell to send to update dialog
-  //     also clean up this data type so its more logical to use
   const eventSegment: CalendarEventSegment = {
-    id: event.id,
-    title: event.title,
-    date: targetDate,
-    startTime: startsBeforeDay ? '00:00' : timeFormat(eventStart),
-    endTime: endsAfterDay ? '00:00' : timeFormat(eventEnd),
-    hourStart: startHour,
-    hourEnd: endMinute !== 0 ? endHour + 1 : endHour,
+    ...event,
+    segmentDate: targetDate,
+    segmentStartTimeFormatted: startsBeforeDay ? '00:00' : timeFormat(eventStart),
+    segmentEndTimeFormatted: endsAfterDay ? '00:00' : timeFormat(eventEnd),
+    segmentMinuteStart: startHour * 60 + startMinute,
+    segmentMinuteEnd: endHour * 60 + endMinute,
   };
 
   return eventSegment;

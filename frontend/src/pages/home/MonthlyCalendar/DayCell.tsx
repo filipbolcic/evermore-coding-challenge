@@ -1,11 +1,11 @@
 import { Paper, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
+import type { CalendarEventSegment } from '../utils';
 import { EventCard } from './EventCard';
-import type { MonthlyEventSegment } from './utils';
 
 interface DayCellProps {
   day: Date;
-  events: MonthlyEventSegment[];
+  events: CalendarEventSegment[];
   isInCurrentMonth: boolean;
   isCurrentDay: boolean;
 }
@@ -34,7 +34,7 @@ export function DayCell({ day, events, isInCurrentMonth, isCurrentDay }: DayCell
 
       <Stack spacing={0.25} sx={{ mt: 0.5, maxHeight: 120, overflowY: 'auto' }}>
         {events.map((event) => (
-          <EventCard key={event.id} event={event} />
+          <EventCard key={event.id} {...event} />
         ))}
       </Stack>
     </Paper>

@@ -1,9 +1,12 @@
+import { tz } from '@date-fns/tz';
 import { Box, Typography } from '@mui/material';
 import { isSameMonth, isToday } from 'date-fns';
 import { useEvents } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
+import { dateFormat } from '../../../utils/date';
+import { getDailyEventSegments } from '../utils';
 import { DayCell } from './DayCell';
-import { getEventsForDay, getMonthlyCalendarDays } from './utils';
+import { getMonthlyCalendarDays } from './utils';
 import { MIN_CALENDAR_WIDTH, MIN_COL_WIDTH, WEEK_DAY_LABELS } from './utils/const';
 
 export function MonthlyCalendar() {
@@ -32,9 +35,11 @@ export function MonthlyCalendar() {
         ))}
 
         {calendarDays.map((day, index) => {
-          const dayEvents = getEventsForDay(day, selectedTimezone, events);
+          const dayEvents = getDailyEventSegments(events, dateFormat(day), selectedTimezone);
+          dayEvents.sort((a, b) => a.startUtc.localeCompare(b.startUtc));
+
           const isInCurrentMonth = isSameMonth(day, selectedDate);
-          const isCurrentDay = isToday(day);
+          const isCurrentDay = isToday(day, { in: tz(selectedTimezone) });
 
           return (
             <DayCell

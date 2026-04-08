@@ -5,12 +5,12 @@ import { useEvents } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
 import { dateFormat } from '../../../utils/date';
 import { getDailyEventSegments } from '../utils';
-import { HOUR_GRID_ROWS, HOUR_LIST } from '../utils/const';
+import { HOUR_GRID_ROWS, HOUR_LIST, HOUR_ROW_HEIGHT } from '../utils/const';
 import { EventCell } from './EventCell';
 import { HourLabelCell } from './HourLabelCell';
 
 const MIN_EVENTS_COL_WIDTH = 200;
-const MIN_GRID_WIDTH = 72 + MIN_EVENTS_COL_WIDTH;
+const MIN_GRID_WIDTH = HOUR_ROW_HEIGHT + MIN_EVENTS_COL_WIDTH;
 
 export function DailyCalendar() {
   const { selectedDate, selectedTimezone } = useCalendarStore();
@@ -71,17 +71,32 @@ export function DailyCalendar() {
             />
           ))}
 
-          {dayEvents.map((event) => (
-            <Box
-              key={`event-${event.id}`}
-              sx={{
-                gridColumn: 'events',
-                gridRow: `hour-${event.hourStart} / hour-${event.hourEnd}`,
-              }}
-            >
-              <EventCell {...event} events={events} />
-            </Box>
-          ))}
+          <Box
+            sx={{
+              gridColumn: 'events',
+              gridRow: 'hour-0 / hour-24',
+              position: 'relative',
+              pointerEvents: 'none',
+            }}
+          >
+            {dayEvents.map((event) => (
+              <Box
+                key={`event-${event.id}`}
+                sx={{
+                  position: 'absolute',
+                  insetInline: 0,
+                  top: `${(event.segmentMinuteStart / 60) * HOUR_ROW_HEIGHT}px`,
+                  height: `${Math.max(
+                    ((event.segmentMinuteEnd - event.segmentMinuteStart) / 60) * HOUR_ROW_HEIGHT,
+                    24
+                  )}px`,
+                  pointerEvents: 'auto',
+                }}
+              >
+                <EventCell {...event} />
+              </Box>
+            ))}
+          </Box>
         </Box>
       </Box>
     </Stack>

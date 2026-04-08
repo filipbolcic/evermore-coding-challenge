@@ -5,13 +5,9 @@ import { useDeleteEvent, useUpdateEvent } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
 import { EditEventDialog } from '../EditEventDialog';
 import { getEditEventValuesFromEvent } from '../EditEventDialog/utils';
-import type { MonthlyEventSegment } from './utils';
+import type { CalendarEventSegment } from '../utils';
 
-interface Props {
-  event: MonthlyEventSegment;
-}
-
-export function EventCard({ event }: Props) {
+export function EventCard(event: CalendarEventSegment) {
   const { selectedTimezone } = useCalendarStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -19,7 +15,7 @@ export function EventCard({ event }: Props) {
   const { mutate: deleteEvent, isPending: isDeletingEvent } = useDeleteEvent();
   const { showSuccessToast, showErrorToast } = useToast();
 
-  const values = getEditEventValuesFromEvent(event.sourceEvent, selectedTimezone);
+  const values = getEditEventValuesFromEvent(event, selectedTimezone);
 
   return (
     <>
@@ -51,7 +47,7 @@ export function EventCard({ event }: Props) {
             display: 'block',
           }}
         >
-          {event.startTime} {event.title}
+          {event.segmentStartTimeFormatted} {event.title}
         </Typography>
       </Box>
 
@@ -64,7 +60,7 @@ export function EventCard({ event }: Props) {
           onClose={() => setIsDialogOpen(false)}
           onSubmit={(e) =>
             updateEvent(
-              { id: event.sourceEvent.id, ...e },
+              { id: event.id, ...e },
               {
                 onSuccess: () => {
                   showSuccessToast(`Event successfully updated.`);
@@ -75,7 +71,7 @@ export function EventCard({ event }: Props) {
             )
           }
           onDelete={() =>
-            deleteEvent(event.sourceEvent.id, {
+            deleteEvent(event.id, {
               onSuccess: () => {
                 showSuccessToast(`Event successfully deleted.`);
                 setIsDialogOpen(false);
