@@ -61,6 +61,7 @@ export function EventCard({ event }: Props) {
       {isDialogOpen && (
         <EditEventDialog
           isOpen={isDialogOpen}
+          isEditMode
           values={values}
           onClose={() => setIsDialogOpen(false)}
           onSubmit={(e) =>

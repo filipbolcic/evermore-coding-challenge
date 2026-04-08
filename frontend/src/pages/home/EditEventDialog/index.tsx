@@ -41,7 +41,6 @@ export function EditEventDialog({
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useEditEventForm(values);
 
@@ -61,8 +60,6 @@ export function EditEventDialog({
 
     onSubmit({ title, startUtc: startUtc.toISOString(), endUtc: endUtc.toISOString() });
   }
-
-  const currentTitle = watch('title');
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -199,7 +196,7 @@ export function EditEventDialog({
         isOpen={isDeleteDialogOpen}
         title="Delete event?"
         confirmLabel="Delete"
-        message={`Are you sure you want to delete "${currentTitle}"?`}
+        message={`Are you sure you want to delete this event?`}
         onClose={() => setIsDeleteDialogOpen(false)}
         onConfirm={() => onDelete?.()}
       />

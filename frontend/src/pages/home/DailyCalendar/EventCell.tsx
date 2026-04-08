@@ -62,6 +62,7 @@ export const EventCell = ({ id, title, startTime, endTime, events }: Props) => {
       {isDialogOpen && (
         <EditEventDialog
           isOpen={isDialogOpen}
+          isEditMode
           values={values}
           onClose={() => setIsDialogOpen(false)}
           onSubmit={(e) =>
