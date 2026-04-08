@@ -26,7 +26,7 @@ export function CalendarHeader() {
     setSelectedTimezone,
   } = useCalendarStore();
 
-  const { mutate: createEvent } = useCreateEvent();
+  const { mutate: createEvent, isPending: isCreatingEvent } = useCreateEvent();
   const { showSuccessToast, showErrorToast } = useToast();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -109,6 +109,7 @@ export function CalendarHeader() {
         <EditEventDialog
           isOpen={isDialogOpen}
           onClose={() => setIsDialogOpen(false)}
+          isSubmitting={isCreatingEvent}
           onSubmit={(e) =>
             createEvent(e, {
               onSuccess: () => {

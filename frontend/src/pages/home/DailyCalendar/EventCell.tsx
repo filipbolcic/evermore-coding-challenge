@@ -14,8 +14,8 @@ export const EventCell = ({ id, title, startTime, endTime, events }: Props) => {
   const { selectedTimezone } = useCalendarStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { mutate: deleteEvent } = useDeleteEvent();
-  const { mutate: updateEvent } = useUpdateEvent();
+  const { mutate: deleteEvent, isPending: isDeletingEvent } = useDeleteEvent();
+  const { mutate: updateEvent, isPending: isUpdatingEvent } = useUpdateEvent();
   const { showSuccessToast, showErrorToast } = useToast();
 
   const sourceEvent = events.find((event) => event.id === id)!;
@@ -85,6 +85,7 @@ export const EventCell = ({ id, title, startTime, endTime, events }: Props) => {
           isOpen={isDialogOpen}
           isEditMode
           values={values}
+          isSubmitting={isUpdatingEvent || isDeletingEvent}
           onClose={() => setIsDialogOpen(false)}
           onSubmit={(e) =>
             updateEvent(

@@ -36,6 +36,7 @@ interface Props {
   required?: boolean;
   error?: boolean;
   helperText?: string;
+  disabled?: boolean;
 }
 
 export const TimezoneSelect = ({
@@ -45,9 +46,11 @@ export const TimezoneSelect = ({
   required = false,
   error = false,
   helperText,
+  disabled = false,
 }: Props) => {
   return (
     <Autocomplete
+      disabled={disabled}
       value={timezone}
       onChange={(_, newValue) => newValue && onSelectTimezone(newValue)}
       onBlur={onBlur}
@@ -60,6 +63,7 @@ export const TimezoneSelect = ({
           required={required}
           error={error}
           helperText={helperText}
+          disabled={disabled}
           sx={{ minWidth: 200 }}
         />
       )}
