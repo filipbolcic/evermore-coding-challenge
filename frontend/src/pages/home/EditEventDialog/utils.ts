@@ -103,7 +103,7 @@ export function getTzDate(timezone: string, dateSegment: Date, timeSegment: Date
   const tzDateTime = TZDate.tz(timezone);
 
   tzDateTime.setFullYear(dateSegment.getFullYear(), dateSegment.getMonth(), dateSegment.getDate());
-  tzDateTime.setHours(timeSegment.getHours(), timeSegment.getMinutes());
+  tzDateTime.setHours(timeSegment.getHours(), timeSegment.getMinutes(), 0, 0);
 
   return tzDateTime;
 }
