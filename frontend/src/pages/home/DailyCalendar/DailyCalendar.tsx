@@ -1,9 +1,8 @@
-import { TZDateMini } from '@date-fns/tz';
+import { tz } from '@date-fns/tz';
 import { Box, Stack, Typography } from '@mui/material';
-import { format } from 'date-fns';
+import { format, getHours, isToday } from 'date-fns';
 import { useEvents } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
-import { dateFormat } from '../../../utils/date';
 import { getDailyEventSegments } from '../utils';
 import { HOUR_GRID_ROWS, HOUR_LIST, HOUR_ROW_HEIGHT } from '../utils/const';
 import { EventCell } from './EventCell';
@@ -16,9 +15,8 @@ export function DailyCalendar() {
   const { selectedDate, selectedTimezone } = useCalendarStore();
   const { data } = useEvents();
 
-  const now = TZDateMini.tz(selectedTimezone);
-  const currentHour = now.getHours();
-  const isToday = dateFormat(now) === selectedDate;
+  const currentHour = getHours(new Date(), { in: tz(selectedTimezone) });
+  const isSelectedDateToday = isToday(selectedDate, { in: tz(selectedTimezone) });
 
   const events = data ?? [];
   const dayEvents = getDailyEventSegments(events, selectedDate, selectedTimezone);
@@ -27,7 +25,7 @@ export function DailyCalendar() {
     <Stack gap={1}>
       <Typography fontSize={['1.4rem', '1.9rem']} fontWeight={500}>
         {format(selectedDate, 'EEEE, MMMM d, yyyy')}
-        {isToday && (
+        {isSelectedDateToday && (
           <Typography component="span" sx={{ ml: 1, color: 'primary.main', fontWeight: 'bold' }}>
             (Today)
           </Typography>
@@ -51,7 +49,7 @@ export function DailyCalendar() {
             <HourLabelCell
               key={`hour-${hour}`}
               hour={hour}
-              isCurrentHour={isToday && currentHour === hour}
+              isCurrentHour={isSelectedDateToday && currentHour === hour}
               isLastHour={hour === 23}
             />
           ))}

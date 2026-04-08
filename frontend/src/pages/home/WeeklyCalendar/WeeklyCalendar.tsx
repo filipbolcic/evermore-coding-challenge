@@ -1,6 +1,6 @@
-import { TZDateMini } from '@date-fns/tz';
+import { tz } from '@date-fns/tz';
 import { Box, Stack, Typography } from '@mui/material';
-import { format, isSameDay, isSameMonth } from 'date-fns';
+import { format, getHours, isSameMonth, isToday } from 'date-fns';
 import { useEvents } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
 import { dateFormat } from '../../../utils/date';
@@ -18,9 +18,6 @@ export function WeeklyCalendar() {
 
   const weekDays = getWeekDays(selectedDate);
   const columns = getGridColumns(weekDays);
-
-  const todayInTimezone = TZDateMini.tz(selectedTimezone);
-  const currentHour = todayInTimezone.getHours();
 
   const events = data ?? [];
   const eventSegments = getWeeklyEventSegments(events, weekDays, selectedTimezone);
@@ -42,6 +39,7 @@ export function WeeklyCalendar() {
     return `${format(weekStart, weekStartFormat)} - ${format(weekEnd, weekEndFormat)}`;
   };
 
+  const currentHour = getHours(new Date(), { in: tz(selectedTimezone) });
   return (
     <Stack gap={1}>
       <Typography fontSize={['1.4rem', '1.9rem']} fontWeight={500}>
@@ -63,7 +61,7 @@ export function WeeklyCalendar() {
             <DateLabelCell
               key={`date-${date.toISOString()}`}
               date={date}
-              isToday={isSameDay(date, todayInTimezone)}
+              isToday={isToday(date, { in: tz(selectedTimezone) })}
               isLast={i === arr.length - 1}
             />
           ))}
