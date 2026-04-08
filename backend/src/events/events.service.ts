@@ -35,6 +35,7 @@ export class EventsService {
     const endUtc = parseEventDateTime(createEventDto.endUtc, 'endUtc');
 
     this.validateTimeRange(startUtc, endUtc);
+    await this.validateNoOverlap(startUtc, endUtc);
 
     const event = await this.prisma.event.create({
       data: {
@@ -72,6 +73,7 @@ export class EventsService {
       : existingEndUtc;
 
     this.validateTimeRange(startUtc, endUtc);
+    await this.validateNoOverlap(startUtc, endUtc, id);
 
     const event = await this.prisma.event.update({
       where: { id },
@@ -108,8 +110,27 @@ export class EventsService {
   }
 
   private validateTimeRange(startUtc: UTCDate, endUtc: UTCDate) {
-    if (isAfter(startUtc, endUtc)) {
+    if (!isAfter(endUtc, startUtc)) {
       throw new BadRequestException('endUtc must be after startUtc');
+    }
+  }
+
+  private async validateNoOverlap(
+    startUtc: UTCDate,
+    endUtc: UTCDate,
+    excludeEventId?: string,
+  ) {
+    const overlappingEvent = await this.prisma.event.findFirst({
+      where: {
+        id: excludeEventId ? { not: excludeEventId } : undefined,
+        startUtc: { lt: endUtc },
+        endUtc: { gt: startUtc },
+      },
+      select: { id: true },
+    });
+
+    if (overlappingEvent) {
+      throw new BadRequestException('Event overlaps with an existing event');
     }
   }
 }

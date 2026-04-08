@@ -10,6 +10,7 @@ describe('EventsService', () => {
   let prismaService: {
     event: {
       findMany: jest.Mock;
+      findFirst: jest.Mock;
       findUnique: jest.Mock;
       create: jest.Mock;
       update: jest.Mock;
@@ -21,6 +22,7 @@ describe('EventsService', () => {
     prismaService = {
       event: {
         findMany: jest.fn(),
+        findFirst: jest.fn(),
         findUnique: jest.fn(),
         create: jest.fn(),
         update: jest.fn(),
@@ -98,6 +100,20 @@ describe('EventsService', () => {
           endUtc: new Date('2026-04-01T10:00:00.000Z'),
         },
       });
+      expect(prismaService.event.findFirst).toHaveBeenCalledWith({
+        where: {
+          id: undefined,
+          startUtc: {
+            lt: new UTCDate('2026-04-01T10:00:00.000Z'),
+          },
+          endUtc: {
+            gt: new UTCDate('2026-04-01T09:00:00.000Z'),
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
     });
 
     it('rejects events whose end time is before or equal to the start time', async () => {
@@ -156,6 +172,45 @@ describe('EventsService', () => {
       expect(createArgs.data.startUtc.toISOString()).toBe('2026-04-01T09:00:00.000Z');
       expect(createArgs.data.endUtc.toISOString()).toBe('2026-04-01T10:00:00.000Z');
     });
+
+    it('rejects creation when the UTC range overlaps an existing event', async () => {
+      prismaService.event.findFirst.mockResolvedValue({
+        id: 'event-2',
+      });
+
+      await expect(
+        eventsService.create({
+          title: 'Overlapping Event',
+          startUtc: '2026-04-01T09:30:00.000Z',
+          endUtc: '2026-04-01T10:30:00.000Z',
+        }),
+      ).rejects.toThrow('Event overlaps with an existing event');
+
+      expect(prismaService.event.create).not.toHaveBeenCalled();
+    });
+
+    it('allows creation when a new event starts exactly when another ends', async () => {
+      prismaService.event.findFirst.mockResolvedValue(null);
+      prismaService.event.create.mockResolvedValue({
+        id: 'event-2',
+        title: 'Follow-up Call',
+        startUtc: new Date('2026-04-01T10:00:00.000Z'),
+        endUtc: new Date('2026-04-01T11:00:00.000Z'),
+      });
+
+      await expect(
+        eventsService.create({
+          title: 'Follow-up Call',
+          startUtc: '2026-04-01T10:00:00.000Z',
+          endUtc: '2026-04-01T11:00:00.000Z',
+        }),
+      ).resolves.toEqual({
+        id: 'event-2',
+        title: 'Follow-up Call',
+        startUtc: '2026-04-01T10:00:00.000Z',
+        endUtc: '2026-04-01T11:00:00.000Z',
+      });
+    });
   });
 
   describe('update', () => {
@@ -190,6 +245,20 @@ describe('EventsService', () => {
           title: 'Updated Call',
           startUtc: new Date('2026-04-01T09:00:00.000Z'),
           endUtc: new Date('2026-04-01T10:00:00.000Z'),
+        },
+      });
+      expect(prismaService.event.findFirst).toHaveBeenCalledWith({
+        where: {
+          id: { not: 'event-1' },
+          startUtc: {
+            lt: new UTCDate('2026-04-01T10:00:00.000Z'),
+          },
+          endUtc: {
+            gt: new UTCDate('2026-04-01T09:00:00.000Z'),
+          },
+        },
+        select: {
+          id: true,
         },
       });
     });
@@ -251,6 +320,55 @@ describe('EventsService', () => {
       expect(updateArgs.data.endUtc).toBeInstanceOf(UTCDate);
       expect(updateArgs.data.startUtc.toISOString()).toBe('2026-04-01T09:30:00.000Z');
       expect(updateArgs.data.endUtc.toISOString()).toBe('2026-04-01T10:00:00.000Z');
+    });
+
+    it('rejects updates when the UTC range overlaps another event', async () => {
+      prismaService.event.findUnique.mockResolvedValue({
+        id: 'event-1',
+        title: 'Client Call',
+        startUtc: new Date('2026-04-01T09:00:00.000Z'),
+        endUtc: new Date('2026-04-01T10:00:00.000Z'),
+      });
+      prismaService.event.findFirst.mockResolvedValue({
+        id: 'event-2',
+      });
+
+      await expect(
+        eventsService.update('event-1', {
+          startUtc: '2026-04-01T09:30:00.000Z',
+          endUtc: '2026-04-01T10:30:00.000Z',
+        }),
+      ).rejects.toThrow('Event overlaps with an existing event');
+
+      expect(prismaService.event.update).not.toHaveBeenCalled();
+    });
+
+    it('allows updates when the UTC range only touches another event boundary', async () => {
+      prismaService.event.findUnique.mockResolvedValue({
+        id: 'event-1',
+        title: 'Client Call',
+        startUtc: new Date('2026-04-01T09:00:00.000Z'),
+        endUtc: new Date('2026-04-01T10:00:00.000Z'),
+      });
+      prismaService.event.findFirst.mockResolvedValue(null);
+      prismaService.event.update.mockResolvedValue({
+        id: 'event-1',
+        title: 'Client Call',
+        startUtc: new Date('2026-04-01T10:00:00.000Z'),
+        endUtc: new Date('2026-04-01T11:00:00.000Z'),
+      });
+
+      await expect(
+        eventsService.update('event-1', {
+          startUtc: '2026-04-01T10:00:00.000Z',
+          endUtc: '2026-04-01T11:00:00.000Z',
+        }),
+      ).resolves.toEqual({
+        id: 'event-1',
+        title: 'Client Call',
+        startUtc: '2026-04-01T10:00:00.000Z',
+        endUtc: '2026-04-01T11:00:00.000Z',
+      });
     });
   });
 
