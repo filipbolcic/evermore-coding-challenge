@@ -1,11 +1,11 @@
 import { Paper, Stack, Typography } from '@mui/material';
 import { format } from 'date-fns';
-import type { Event } from '../../../api/events/types';
 import { EventCard } from './EventCard';
+import type { MonthlyEventSegment } from './utils';
 
 interface DayCellProps {
   day: Date;
-  events: Event[];
+  events: MonthlyEventSegment[];
   isInCurrentMonth: boolean;
   isCurrentDay: boolean;
 }

@@ -1,23 +1,28 @@
-import { tz, TZDateMini } from '@date-fns/tz';
-import {
-  eachDayOfInterval,
-  endOfMonth,
-  endOfWeek,
-  isSameDay,
-  startOfMonth,
-  startOfWeek,
-} from 'date-fns';
+import { tz } from '@date-fns/tz';
+import { eachDayOfInterval, endOfMonth, endOfWeek, startOfMonth, startOfWeek } from 'date-fns';
 import type { Event } from '../../../../api/events/types';
+import { dateFormat } from '../../../../utils/date';
+import { getDailyEventSegments, type CalendarEventSegment } from '../../utils';
+
+export interface MonthlyEventSegment extends CalendarEventSegment {
+  sourceEvent: Event;
+}
 
 export function getEventsForDay(day: Date, timezone: string, events: Event[]) {
-  const todayEvents = events.filter((e) => {
-    const eventDate = new TZDateMini(e.startUtc, timezone);
-    return isSameDay(eventDate, day);
-  });
+  const dailySegments = getDailyEventSegments(events, dateFormat(day), timezone);
 
-  return todayEvents.sort(
-    (a, b) => new Date(a.startUtc).getTime() - new Date(b.startUtc).getTime()
-  );
+  return dailySegments
+    .map((segment) => ({
+      ...segment,
+      sourceEvent: events.find((event) => event.id === segment.id)!,
+    }))
+    .sort((a, b) => {
+      if (a.hourStart !== b.hourStart) {
+        return a.hourStart - b.hourStart;
+      }
+
+      return a.sourceEvent.startUtc.localeCompare(b.sourceEvent.startUtc);
+    });
 }
 
 export function getMonthlyCalendarDays(date: string, timezone: string) {

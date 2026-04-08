@@ -1,28 +1,25 @@
-import { TZDateMini } from '@date-fns/tz';
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
-import type { Event } from '../../../api/events/types';
 import { useToast } from '../../../components/Toast';
 import { useDeleteEvent, useUpdateEvent } from '../../../hooks/api/events';
 import { useCalendarStore } from '../../../stores/calendar';
-import { timeFormat } from '../../../utils/date';
 import { EditEventDialog } from '../EditEventDialog';
 import { getEditEventValuesFromEvent } from '../EditEventDialog/utils';
+import type { MonthlyEventSegment } from './utils';
 
 interface Props {
-  event: Event;
+  event: MonthlyEventSegment;
 }
 
 export function EventCard({ event }: Props) {
   const { selectedTimezone } = useCalendarStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { mutate: updateEvent } = useUpdateEvent();
-  const { mutate: deleteEvent } = useDeleteEvent();
+  const { mutate: updateEvent, isPending: isUpdatingEvent } = useUpdateEvent();
+  const { mutate: deleteEvent, isPending: isDeletingEvent } = useDeleteEvent();
   const { showSuccessToast, showErrorToast } = useToast();
 
-  const values = getEditEventValuesFromEvent(event, selectedTimezone);
-  const startTime = timeFormat(new TZDateMini(event.startUtc, selectedTimezone));
+  const values = getEditEventValuesFromEvent(event.sourceEvent, selectedTimezone);
 
   return (
     <>
@@ -54,7 +51,7 @@ export function EventCard({ event }: Props) {
             display: 'block',
           }}
         >
-          {startTime} {event.title}
+          {event.startTime} {event.title}
         </Typography>
       </Box>
 
@@ -63,10 +60,11 @@ export function EventCard({ event }: Props) {
           isOpen={isDialogOpen}
           isEditMode
           values={values}
+          isSubmitting={isUpdatingEvent || isDeletingEvent}
           onClose={() => setIsDialogOpen(false)}
           onSubmit={(e) =>
             updateEvent(
-              { id: event.id, ...e },
+              { id: event.sourceEvent.id, ...e },
               {
                 onSuccess: () => {
                   showSuccessToast(`Event successfully updated.`);
@@ -77,7 +75,7 @@ export function EventCard({ event }: Props) {
             )
           }
           onDelete={() =>
-            deleteEvent(event.id, {
+            deleteEvent(event.sourceEvent.id, {
               onSuccess: () => {
                 showSuccessToast(`Event successfully deleted.`);
                 setIsDialogOpen(false);
